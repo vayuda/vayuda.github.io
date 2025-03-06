@@ -1,0 +1,288 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Lofi Music Generator</title>
+        <script
+            crossorigin
+            src="https://unpkg.com/react@18/umd/react.production.min.js"
+        ></script>
+        <script
+            crossorigin
+            src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+        ></script>
+        <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <div id="root"></div>
+
+        <script type="text/babel">
+            // Keep your existing audio classes (AudioEngine, Song, Track, etc.)
+            // Just copy them here, above the React components
+
+            // React Components
+            function TransportControls({ onPlay, onSkip, isPlaying }) {
+                return (
+                    <div className="card mb-4">
+                        <div className="card-body text-center">
+                            <button
+                                className={`btn btn-primary me-2 ${isPlaying ? "active" : ""}`}
+                                onClick={() => onPlay(!isPlaying)}
+                            >
+                                {isPlaying ? "Pause" : "Play"}
+                            </button>
+                            <button
+                                className="btn btn-primary"
+                                onClick={onSkip}
+                            >
+                                Skip
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            function VolumeControls({
+                volumes,
+                onVolumeChange,
+                onMute,
+                mutedTracks,
+            }) {
+                return (
+                    <div className="card">
+                        <div className="card-header">
+                            <h5 className="card-title">Track Volumes</h5>
+                        </div>
+                        <div className="card-body">
+                            {Object.entries(volumes).map(([track, volume]) => (
+                                <div key={track} className="mb-3">
+                                    <label className="form-label">
+                                        {track.charAt(0).toUpperCase() +
+                                            track.slice(1)}{" "}
+                                        Volume
+                                    </label>
+                                    <div className="d-flex align-items-center">
+                                        <input
+                                            type="range"
+                                            className="form-range me-2"
+                                            value={volume}
+                                            onChange={(e) =>
+                                                onVolumeChange(
+                                                    track,
+                                                    e.target.value,
+                                                )
+                                            }
+                                            min="0"
+                                            max="100"
+                                            disabled={mutedTracks[track]}
+                                        />
+                                        {track !== "master" && (
+                                            <button
+                                                className={`btn btn-sm btn-outline-secondary ${mutedTracks[track] ? "active" : ""}`}
+                                                onClick={() => onMute(track)}
+                                            >
+                                                {mutedTracks[track]
+                                                    ? "Unmute"
+                                                    : "Mute"}
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
+
+            function SynthControls({ settings, onSettingChange }) {
+                const [activeTab, setActiveTab] = React.useState("melody");
+
+                return (
+                    <div className="card">
+                        <div className="card-header">
+                            <h5 className="card-title">Synth Settings</h5>
+                        </div>
+                        <div className="card-body">
+                            <ul className="nav nav-tabs">
+                                {["melody", "harmony", "bass"].map((tab) => (
+                                    <li key={tab} className="nav-item">
+                                        <a
+                                            className={`nav-link ${activeTab === tab ? "active" : ""}`}
+                                            onClick={() => setActiveTab(tab)}
+                                            href="#"
+                                        >
+                                            {tab.charAt(0).toUpperCase() +
+                                                tab.slice(1)}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+
+                            <div className="tab-content mt-3">
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <div className="mb-3">
+                                            <label className="form-label">
+                                                Wave Type
+                                            </label>
+                                            <select
+                                                className="form-select"
+                                                value={
+                                                    settings[activeTab].waveType
+                                                }
+                                                onChange={(e) =>
+                                                    onSettingChange(
+                                                        activeTab,
+                                                        "waveType",
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            >
+                                                <option value="sine">
+                                                    Sine
+                                                </option>
+                                                <option value="triangle">
+                                                    Triangle
+                                                </option>
+                                                <option value="square">
+                                                    Square
+                                                </option>
+                                                <option value="sawtooth">
+                                                    Sawtooth
+                                                </option>
+                                            </select>
+                                        </div>
+                                        {/* Add other synth controls */}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            function App() {
+                // State for UI
+                const [isPlaying, setIsPlaying] = React.useState(false);
+                const [volumes, setVolumes] = React.useState({
+                    master: 75,
+                    melody: 75,
+                    harmony: 75,
+                    bass: 75,
+                    drums: 75,
+                });
+                const [mutedTracks, setMutedTracks] = React.useState({
+                    melody: false,
+                    harmony: false,
+                    bass: false,
+                    drums: false,
+                });
+
+                // Reference to audio engine instances
+                const audioEngineRef = React.useRef(null);
+                const songManagerRef = React.useRef(null);
+
+                // Initialize audio engine
+                React.useEffect(() => {
+                    audioEngineRef.current = new AudioEngine();
+                    songManagerRef.current = new SongManager(
+                        audioEngineRef.current,
+                    );
+                }, []);
+
+                const handlePlay = (shouldPlay) => {
+                    if (shouldPlay) {
+                        audioEngineRef.current.resume();
+                        songManagerRef.current.playSong();
+                    } else {
+                        songManagerRef.current.pause();
+                    }
+                    setIsPlaying(shouldPlay);
+                };
+
+                const handleSkip = () => {
+                    songManagerRef.current.stop();
+                    songManagerRef.current.createNewSong();
+                    if (isPlaying) {
+                        songManagerRef.current.playSong();
+                    }
+                };
+
+                return (
+                    <div className="container py-4">
+                        <h1 className="text-center mb-4">
+                            Lofi Music Generator
+                        </h1>
+
+                        <TransportControls
+                            isPlaying={isPlaying}
+                            onPlay={handlePlay}
+                            onSkip={handleSkip}
+                        />
+
+                        <div className="row g-4">
+                            <div className="col-lg-4">
+                                <VolumeControls
+                                    volumes={volumes}
+                                    mutedTracks={mutedTracks}
+                                    onVolumeChange={(track, value) => {
+                                        setVolumes((prev) => ({
+                                            ...prev,
+                                            [track]: value,
+                                        }));
+                                        // Update audio engine
+                                    }}
+                                    onMute={(track) => {
+                                        setMutedTracks((prev) => ({
+                                            ...prev,
+                                            [track]: !prev[track],
+                                        }));
+                                        // Update audio engine
+                                    }}
+                                />
+                            </div>
+
+                            {/* Add other components */}
+                        </div>
+                    </div>
+                );
+            }
+
+            // Initialize app after user interaction
+            function StartupOverlay({ onStart }) {
+                return (
+                    <div className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 d-flex align-items-center justify-content-center">
+                        <div className="text-center text-white">
+                            <h2>Lofi Music Generator</h2>
+                            <button
+                                className="btn btn-primary mt-3"
+                                onClick={onStart}
+                            >
+                                Click to Start
+                            </button>
+                        </div>
+                    </div>
+                );
+            }
+
+            function AppContainer() {
+                const [isStarted, setIsStarted] = React.useState(false);
+
+                if (!isStarted) {
+                    return (
+                        <StartupOverlay onStart={() => setIsStarted(true)} />
+                    );
+                }
+
+                return <App />;
+            }
+
+            // Render the app
+            const root = ReactDOM.createRoot(document.getElementById("root"));
+            root.render(<AppContainer />);
+        </script>
+    </body>
+</html>

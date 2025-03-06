@@ -82,8 +82,12 @@ body {
 h1,
 h2,
 h3,
+h4,
 .special-heading {
     color: var(--red);
+    transform-origin: left;
+    transform: scale(0.9);
+    white-space: nowrap;
 }
 
 a {
