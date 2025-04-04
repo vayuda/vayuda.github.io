@@ -1,0 +1,1863 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Lofi Procedural Music Generator</title>
+        <!-- Bootstrap CSS -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="../styles.css" />
+        <style>
+            /* Card styling */
+            .card {
+                background-color: var(--milk);
+                border: none;
+                border-radius: 8px;
+                margin-bottom: 1.5rem;
+            }
+
+            .card-header {
+                background-color: var(--mocha);
+                color: var(--beige);
+                border-bottom: none;
+                border-radius: 8px 8px 0 0 !important;
+                padding: 0.75rem 1.25rem;
+            }
+
+            .card-body {
+                background-color: var(--milk);
+                border-radius: 0 0 8px 8px;
+                padding: 1.5rem;
+            }
+
+            /* Form controls */
+            .form-control,
+            .form-select {
+                background-color: var(--beige);
+                border: 1px solid var(--mocha);
+                color: var(--dark);
+            }
+
+            .form-control:focus,
+            .form-select:focus {
+                border-color: var(--coffee);
+                box-shadow: 0 0 0 0.2rem rgba(111, 68, 54, 0.25);
+                background-color: var(--beige);
+            }
+
+            /* Range slider styling */
+            .form-range {
+                height: 1.5rem;
+                padding: 0;
+            }
+
+            .form-range::-webkit-slider-thumb {
+                background: var(--coffee);
+            }
+
+            .form-range::-moz-range-thumb {
+                background: var(--coffee);
+            }
+
+            .form-range::-webkit-slider-runnable-track {
+                background: var(--mocha);
+                height: 0.5rem;
+                border-radius: 0.25rem;
+            }
+
+            .form-range::-moz-range-track {
+                background: var(--mocha);
+                height: 0.5rem;
+                border-radius: 0.25rem;
+            }
+
+            /* Labels and value displays */
+            .form-label {
+                color: var(--coffee);
+                font-weight: 500;
+            }
+
+            .value-display {
+                color: var(--dark);
+                font-weight: 500;
+            }
+
+            /* Collapsible sections */
+            .card-header[role="button"]:hover {
+                cursor: pointer;
+                background-color: var(--coffee);
+            }
+
+            /* Title styling */
+            h1.text-center {
+                color: var(--coffee);
+                margin-bottom: 2rem;
+                font-weight: bold;
+            }
+
+            /* Card title styling */
+            .card-title {
+                margin-bottom: 0;
+                color: var(--beige);
+            }
+
+            /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .container {
+                    padding: 1rem;
+                }
+
+                .card {
+                    margin-bottom: 1rem;
+                }
+
+                h1.text-center {
+                    font-size: 1.5rem;
+                }
+
+                .card-title {
+                    font-size: 1.1rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container py-4">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <h1 class="text-center mb-4">
+                        Lofi Procedural Music Generator
+                    </h1>
+                    <div class="row g-4">
+                        <!-- Left Column -->
+                        <div class="col-md-6">
+                            <!-- Main Controls Card -->
+                            <div class="card mb-4">
+                                <div
+                                    class="card-header"
+                                    role="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#mainControls"
+                                    aria-expanded="true"
+                                >
+                                    <div
+                                        class="d-flex justify-content-between align-items-center"
+                                    >
+                                        <h5 class="card-title mb-0">
+                                            Main Controls
+                                        </h5>
+                                        <i class="bi bi-chevron-down"></i>
+                                    </div>
+                                </div>
+                                <div id="mainControls" class="collapse show">
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2 mb-3">
+                                            <button
+                                                id="playPauseBtn"
+                                                class="btn btn-primary btn-lg"
+                                            >
+                                                Play
+                                            </button>
+                                            <div class="row g-2 mt-1">
+                                                <div class="col-6">
+                                                    <button
+                                                        id="exportBtn"
+                                                        class="btn btn-secondary w-100"
+                                                    >
+                                                        Export Settings
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3">
+                                            <div class="col-md-12">
+                                                <label
+                                                    class="form-label d-flex justify-content-between"
+                                                >
+                                                    <span>Tempo (BPM)</span>
+                                                    <span class="value-display"
+                                                        ><span id="tempoValue"
+                                                            >80</span
+                                                        >
+                                                        BPM</span
+                                                    >
+                                                </label>
+                                                <input
+                                                    type="range"
+                                                    class="form-range"
+                                                    id="tempoInput"
+                                                    min="40"
+                                                    max="200"
+                                                    value="80"
+                                                />
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="form-label"
+                                                    >Beat Pattern</label
+                                                >
+                                                <select
+                                                    id="beatPatternSelect"
+                                                    class="form-select"
+                                                >
+                                                    <option value="lofi">
+                                                        Lofi
+                                                    </option>
+                                                    <option value="trap">
+                                                        Trap
+                                                    </option>
+                                                    <option value="jazz">
+                                                        Jazz
+                                                    </option>
+                                                    <option value="house">
+                                                        House
+                                                    </option>
+                                                    <option value="random">
+                                                        Random
+                                                    </option>
+                                                </select>
+                                                <button
+                                                    id="randomizePattern"
+                                                    class="btn btn-secondary mt-2"
+                                                >
+                                                    Randomize Pattern
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Musical Settings Card -->
+                            <div class="card mb-4">
+                                <div
+                                    class="card-header"
+                                    role="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#musicSettings"
+                                    aria-expanded="true"
+                                >
+                                    <div
+                                        class="d-flex justify-content-between align-items-center"
+                                    >
+                                        <h5 class="card-title mb-0">
+                                            Synth Settings
+                                        </h5>
+                                        <i class="bi bi-chevron-down"></i>
+                                    </div>
+                                </div>
+                                <div id="musicSettings" class="collapse show">
+                                    <div class="card-body">
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label"
+                                                    >Key</label
+                                                >
+                                                <select
+                                                    id="keySelect"
+                                                    class="form-select"
+                                                >
+                                                    <option value="0">C</option>
+                                                    <option value="2">D</option>
+                                                    <option value="4">E</option>
+                                                    <option value="5">F</option>
+                                                    <option value="7">G</option>
+                                                    <option value="9">A</option>
+                                                    <option value="11">
+                                                        B
+                                                    </option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <label class="form-label"
+                                                    >Scale Mode</label
+                                                >
+                                                <select
+                                                    id="scaleModeSelect"
+                                                    class="form-select"
+                                                >
+                                                    <option value="major">
+                                                        Major
+                                                    </option>
+                                                    <option value="minor">
+                                                        Minor
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-12 mt-3">
+                                                <label class="form-label"
+                                                    >Octave Range</label
+                                                >
+                                                <div class="row g-3">
+                                                    <div class="col-6">
+                                                        <label
+                                                            class="form-label"
+                                                            >Lowest
+                                                            Octave</label
+                                                        >
+                                                        <select
+                                                            id="lowestOctaveSelect"
+                                                            class="form-select"
+                                                        >
+                                                            <option value="2">
+                                                                2 (Low)
+                                                            </option>
+                                                            <option
+                                                                value="3"
+                                                                selected
+                                                            >
+                                                                3 (Mid-Low)
+                                                            </option>
+                                                            <option value="4">
+                                                                4 (Mid)
+                                                            </option>
+                                                            <option value="5">
+                                                                5 (Mid-High)
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <label
+                                                            class="form-label"
+                                                            >Octave Range</label
+                                                        >
+                                                        <select
+                                                            id="octaveRangeSelect"
+                                                            class="form-select"
+                                                        >
+                                                            <option value="1">
+                                                                1 Octave
+                                                            </option>
+                                                            <option value="2">
+                                                                2 Octaves
+                                                            </option>
+                                                            <option
+                                                                value="3"
+                                                                selected
+                                                            >
+                                                                3 Octaves
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12 mt-3">
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label
+                                                            class="form-label"
+                                                            >Osc 1
+                                                            Waveform</label
+                                                        >
+                                                        <select
+                                                            id="osc1WaveformSelect"
+                                                            class="form-select"
+                                                        >
+                                                            <option
+                                                                value="sawtooth"
+                                                            >
+                                                                Sawtooth
+                                                            </option>
+                                                            <option
+                                                                value="square"
+                                                            >
+                                                                Square
+                                                            </option>
+                                                            <option
+                                                                value="triangle"
+                                                            >
+                                                                Triangle
+                                                            </option>
+                                                            <option
+                                                                value="sine"
+                                                            >
+                                                                Sine
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label
+                                                            class="form-label"
+                                                            >Osc 2
+                                                            Waveform</label
+                                                        >
+                                                        <select
+                                                            id="osc2WaveformSelect"
+                                                            class="form-select"
+                                                        >
+                                                            <option
+                                                                value="triangle"
+                                                            >
+                                                                Triangle
+                                                            </option>
+                                                            <option
+                                                                value="sawtooth"
+                                                            >
+                                                                Sawtooth
+                                                            </option>
+                                                            <option
+                                                                value="square"
+                                                            >
+                                                                Square
+                                                            </option>
+                                                            <option
+                                                                value="sine"
+                                                            >
+                                                                Sine
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <label
+                                                    class="form-label d-flex justify-content-between"
+                                                >
+                                                    <span>Detune Amount</span>
+                                                    <span class="value-display"
+                                                        ><span id="detuneValue"
+                                                            >10</span
+                                                        >
+                                                        cents</span
+                                                    >
+                                                </label>
+                                                <input
+                                                    type="range"
+                                                    class="form-range"
+                                                    id="detuneAmount"
+                                                    min="0"
+                                                    max="50"
+                                                    value="10"
+                                                />
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <label
+                                                    class="form-label d-flex justify-content-between"
+                                                >
+                                                    <span>Osc Mix</span>
+                                                    <span class="value-display"
+                                                        ><span id="oscMixValue"
+                                                            >50</span
+                                                        >%</span
+                                                    >
+                                                </label>
+                                                <input
+                                                    type="range"
+                                                    class="form-range"
+                                                    id="oscMix"
+                                                    min="0"
+                                                    max="100"
+                                                    value="50"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Volume Controls Card -->
+                            <div class="card mb-4">
+                                <div
+                                    class="card-header"
+                                    role="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#volumeMixer"
+                                    aria-expanded="true"
+                                >
+                                    <div
+                                        class="d-flex justify-content-between align-items-center"
+                                    >
+                                        <h5 class="card-title mb-0">
+                                            Volume Mixer
+                                        </h5>
+                                        <i class="bi bi-chevron-down"></i>
+                                    </div>
+                                </div>
+                                <div id="volumeMixer" class="collapse show">
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label
+                                                class="form-label d-flex justify-content-between"
+                                            >
+                                                <span>Synth</span>
+                                                <span class="value-display"
+                                                    ><span id="synthVolumeValue"
+                                                        >30</span
+                                                    >%</span
+                                                >
+                                            </label>
+                                            <input
+                                                type="range"
+                                                class="form-range"
+                                                id="synthVolume"
+                                                min="0"
+                                                max="100"
+                                                value="30"
+                                            />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label
+                                                class="form-label d-flex justify-content-between"
+                                            >
+                                                <span>Kick</span>
+                                                <span class="value-display"
+                                                    ><span id="kickVolumeValue"
+                                                        >100</span
+                                                    >%</span
+                                                >
+                                            </label>
+                                            <input
+                                                type="range"
+                                                class="form-range"
+                                                id="kickVolume"
+                                                min="0"
+                                                max="100"
+                                                value="100"
+                                            />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label
+                                                class="form-label d-flex justify-content-between"
+                                            >
+                                                <span>Snare</span>
+                                                <span class="value-display"
+                                                    ><span id="snareVolumeValue"
+                                                        >70</span
+                                                    >%</span
+                                                >
+                                            </label>
+                                            <input
+                                                type="range"
+                                                class="form-range"
+                                                id="snareVolume"
+                                                min="0"
+                                                max="100"
+                                                value="70"
+                                            />
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label
+                                                class="form-label d-flex justify-content-between"
+                                            >
+                                                <span>Hi-Hat</span>
+                                                <span class="value-display"
+                                                    ><span id="hihatVolumeValue"
+                                                        >50</span
+                                                    >%</span
+                                                >
+                                            </label>
+                                            <input
+                                                type="range"
+                                                class="form-range"
+                                                id="hihatVolume"
+                                                min="0"
+                                                max="100"
+                                                value="50"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="col-md-6">
+                            <!-- Rhythm Settings Card -->
+                            <div class="card mb-4">
+                                <div
+                                    class="card-header"
+                                    role="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#melodySettings"
+                                    aria-expanded="true"
+                                >
+                                    <div
+                                        class="d-flex justify-content-between align-items-center"
+                                    >
+                                        <h5 class="card-title mb-0">
+                                            Rhythm Settings
+                                        </h5>
+                                        <i class="bi bi-chevron-down"></i>
+                                    </div>
+                                </div>
+                                <div id="melodySettings" class="collapse show">
+                                    <div class="card-body">
+                                        <div class="card-body">
+                                            <!-- Rhythm Density -->
+                                            <div class="mb-3">
+                                                <label
+                                                    class="form-label d-flex justify-content-between"
+                                                >
+                                                    <span>Drum Swing</span>
+                                                    <span class="value-display"
+                                                        ><span id="swingValue"
+                                                            >30</span
+                                                        >%</span
+                                                    >
+                                                </label>
+                                                <input
+                                                    type="range"
+                                                    class="form-range"
+                                                    id="drumSwing"
+                                                    min="0"
+                                                    max="100"
+                                                    value="30"
+                                                />
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label
+                                                    class="form-label d-flex justify-content-between"
+                                                >
+                                                    <span
+                                                        >Drum
+                                                        Randomization</span
+                                                    >
+                                                    <span class="value-display"
+                                                        ><span
+                                                            id="randomizationValue"
+                                                            >30</span
+                                                        >%</span
+                                                    >
+                                                </label>
+                                                <input
+                                                    type="range"
+                                                    class="form-range"
+                                                    id="drumRandomization"
+                                                    min="0"
+                                                    max="100"
+                                                    value="30"
+                                                />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label
+                                                    class="form-label d-flex justify-content-between"
+                                                >
+                                                    <span>Note Density</span>
+                                                    <span class="value-display"
+                                                        ><span id="densityValue"
+                                                            >50</span
+                                                        >%</span
+                                                    >
+                                                </label>
+                                                <input
+                                                    type="range"
+                                                    class="form-range"
+                                                    id="rhythmDensity"
+                                                    min="0"
+                                                    max="100"
+                                                    value="50"
+                                                />
+                                            </div>
+
+                                            <!-- Syncopation Amount -->
+                                            <div class="mb-3">
+                                                <label
+                                                    class="form-label d-flex justify-content-between"
+                                                >
+                                                    <span>Syncopation</span>
+                                                    <span class="value-display"
+                                                        ><span
+                                                            id="syncopationValue"
+                                                            >30</span
+                                                        >%</span
+                                                    >
+                                                </label>
+                                                <input
+                                                    type="range"
+                                                    class="form-range"
+                                                    id="syncopationAmount"
+                                                    min="0"
+                                                    max="100"
+                                                    value="30"
+                                                />
+                                            </div>
+
+                                            <!-- Note Length -->
+                                            <div class="mb-3">
+                                                <label
+                                                    class="form-label d-flex justify-content-between"
+                                                >
+                                                    <span>Note Length</span>
+                                                    <span class="value-display"
+                                                        ><span
+                                                            id="noteLengthValue"
+                                                            >0.3</span
+                                                        >s</span
+                                                    >
+                                                </label>
+                                                <input
+                                                    type="range"
+                                                    class="form-range"
+                                                    id="noteLength"
+                                                    min="10"
+                                                    max="100"
+                                                    value="30"
+                                                />
+                                            </div>
+
+                                            <!-- Variation Amount -->
+                                            <div class="mb-3">
+                                                <label
+                                                    class="form-label d-flex justify-content-between"
+                                                >
+                                                    <span
+                                                        >Rhythm Variation</span
+                                                    >
+                                                    <span class="value-display"
+                                                        ><span
+                                                            id="variationValue"
+                                                            >50</span
+                                                        >%</span
+                                                    >
+                                                </label>
+                                                <input
+                                                    type="range"
+                                                    class="form-range"
+                                                    id="rhythmVariation"
+                                                    min="0"
+                                                    max="100"
+                                                    value="50"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Audio Effects Card -->
+                            <div class="card mb-4">
+                                <div
+                                    class="card-header"
+                                    role="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#filterControls"
+                                    aria-expanded="true"
+                                >
+                                    <div
+                                        class="d-flex justify-content-between align-items-center"
+                                    >
+                                        <h5 class="card-title mb-0">
+                                            Audio Effects
+                                        </h5>
+                                        <i class="bi bi-chevron-down"></i>
+                                    </div>
+                                </div>
+                                <div id="filterControls" class="collapse show">
+                                    <div class="card-body">
+                                        <!-- Low-Pass Filter Control -->
+                                        <div class="mb-3">
+                                            <label
+                                                class="form-label d-flex justify-content-between"
+                                            >
+                                                <span>Low pass filter</span>
+                                                <span class="value-display"
+                                                    ><span id="filterValue"
+                                                        >2000</span
+                                                    >
+                                                    Hz</span
+                                                >
+                                            </label>
+                                            <input
+                                                type="range"
+                                                class="form-range"
+                                                id="filterSlider"
+                                                min="200"
+                                                max="5000"
+                                                value="2000"
+                                            />
+                                        </div>
+
+                                        <!-- Static Noise Control -->
+                                        <div class="mb-3">
+                                            <label
+                                                class="form-label d-flex justify-content-between"
+                                            >
+                                                <span>Static Noise</span>
+                                                <span class="value-display">
+                                                    <span id="staticNoiseValue"
+                                                        >0</span
+                                                    >%
+                                                </span>
+                                            </label>
+                                            <input
+                                                type="range"
+                                                class="form-range"
+                                                id="staticNoiseLevel"
+                                                min="0"
+                                                max="100"
+                                                value="0"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            // Core classes for state management
+            class AudioSettings {
+                constructor() {
+                    this.tempo = 80;
+                    this.key = 0;
+                    this.scaleMode = "major";
+                    this.lowestOctave = 3;
+                    this.octaveRange = 3;
+                    this.beatPattern = "lofi";
+                }
+
+                toJSON() {
+                    return {
+                        tempo: this.tempo,
+                        key: this.key,
+                        scaleMode: this.scaleMode,
+                        lowestOctave: this.lowestOctave,
+                        octaveRange: this.octaveRange,
+                        beatPattern: this.beatPattern,
+                    };
+                }
+
+                fromJSON(json) {
+                    Object.assign(this, json);
+                }
+            }
+
+            class SynthSettings {
+                constructor() {
+                    this.osc1Waveform = "sawtooth";
+                    this.osc2Waveform = "triangle";
+                    this.detuneAmount = 10;
+                    this.oscMix = 0.5;
+                    this.filterCutoff = 2000;
+                }
+
+                toJSON() {
+                    return {
+                        osc1Waveform: this.osc1Waveform,
+                        osc2Waveform: this.osc2Waveform,
+                        detuneAmount: this.detuneAmount,
+                        oscMix: this.oscMix,
+                        filterCutoff: this.filterCutoff,
+                    };
+                }
+
+                fromJSON(json) {
+                    Object.assign(this, json);
+                }
+            }
+
+            class DrumSettings {
+                constructor() {
+                    this.swing = 0.3;
+                    this.randomization = 0.3;
+                    this.volumes = {
+                        kick: 0.3,
+                        snare: 0.14,
+                        hihat: 0.04,
+                        synth: 0.5,
+                    };
+                    // Default drum patterns
+                    this.patterns = {
+                        lofi: [
+                            { kick: 1, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 0.3 },
+                            { kick: 0.1, snare: 0, hihat: 0.8 },
+                            { kick: 0, snare: 0, hihat: 0.3 },
+                            { kick: 0, snare: 1, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 0.3 },
+                            { kick: 0.2, snare: 0, hihat: 0.8 },
+                            { kick: 0, snare: 0, hihat: 0.3 },
+                            { kick: 1, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 0.3 },
+                            { kick: 0.1, snare: 0, hihat: 0.8 },
+                            { kick: 0, snare: 0, hihat: 0.3 },
+                            { kick: 0, snare: 1, hihat: 1 },
+                            { kick: 0, snare: 0.2, hihat: 0.3 },
+                            { kick: 0.2, snare: 0, hihat: 0.8 },
+                            { kick: 0, snare: 0.1, hihat: 0.3 },
+                        ],
+                        trap: [
+                            { kick: 1, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 0.3, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 1, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 0.5, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 0.8, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 0.3, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 1, hihat: 1 },
+                            { kick: 0.2, snare: 0, hihat: 1 },
+                            { kick: 0.5, snare: 0, hihat: 1 },
+                            { kick: 0.3, snare: 0.2, hihat: 1 },
+                        ],
+                        jazz: [
+                            { kick: 1, snare: 0, hihat: 0.8 },
+                            { kick: 0, snare: 0, hihat: 0.5 },
+                            { kick: 0, snare: 1, hihat: 0.8 },
+                            { kick: 0, snare: 0, hihat: 0.5 },
+                            { kick: 0.8, snare: 0, hihat: 0.8 },
+                            { kick: 0, snare: 0, hihat: 0.5 },
+                            { kick: 0, snare: 1, hihat: 0.8 },
+                            { kick: 0.3, snare: 0, hihat: 0.5 },
+                            { kick: 1, snare: 0, hihat: 0.8 },
+                            { kick: 0, snare: 0.3, hihat: 0.5 },
+                            { kick: 0, snare: 1, hihat: 0.8 },
+                            { kick: 0.2, snare: 0, hihat: 0.5 },
+                            { kick: 0.8, snare: 0, hihat: 0.8 },
+                            { kick: 0, snare: 0.2, hihat: 0.5 },
+                            { kick: 0, snare: 1, hihat: 0.8 },
+                            { kick: 0.3, snare: 0, hihat: 0.5 },
+                        ],
+                        house: [
+                            { kick: 1, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 1, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 1, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 1, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                            { kick: 0, snare: 0, hihat: 1 },
+                        ],
+                    };
+                }
+                generateRandomPattern(complexity = 0.5) {
+                    const pattern = [];
+                    const kickProbs = [1, 0.3, 0.1, 0.2]; // Strong beats
+                    const snareProbs = [0.8, 0.2, 0.1, 0.1]; // Backbeats
+                    const hihatProbs = [0.9, 0.7, 0.8, 0.7]; // Consistent rhythm
+
+                    for (let i = 0; i < 16; i++) {
+                        const beat = i % 4;
+                        const randomFactor = Math.random() * complexity;
+
+                        let kick =
+                            Math.random() < kickProbs[beat] * randomFactor
+                                ? 1
+                                : 0;
+                        let snare =
+                            Math.random() < snareProbs[beat] * randomFactor
+                                ? 1
+                                : 0;
+                        let hihat =
+                            Math.random() < hihatProbs[beat] * randomFactor
+                                ? 1
+                                : 0;
+
+                        // Ensure kick and snare don't play simultaneously
+                        if (kick && snare) {
+                            if (Math.random() > 0.5) snare = 0;
+                            else kick = 0;
+                        }
+
+                        pattern.push({ kick, snare, hihat });
+                    }
+
+                    return pattern;
+                }
+
+                randomizeCurrentPattern() {
+                    const randomPattern = this.generateRandomPattern();
+                    this.patterns["random"] = randomPattern;
+                    return randomPattern;
+                }
+
+                toJSON() {
+                    return {
+                        swing: this.swing,
+                        randomization: this.randomization,
+                        volumes: { ...this.volumes },
+                    };
+                }
+
+                fromJSON(json) {
+                    Object.assign(this, json);
+                }
+            }
+
+            class MelodySettings {
+                constructor() {
+                    this.rhythmDensity = 0.5;
+                    this.syncopationAmount = 0.3;
+                    this.noteLength = 0.3;
+                    this.rhythmVariation = 0.5;
+                }
+
+                toJSON() {
+                    return {
+                        rhythmDensity: this.rhythmDensity,
+                        syncopationAmount: this.syncopationAmount,
+                        noteLength: this.noteLength,
+                        rhythmVariation: this.rhythmVariation,
+                    };
+                }
+
+                fromJSON(json) {
+                    Object.assign(this, json);
+                }
+            }
+
+            class EffectSettings {
+                constructor() {
+                    this.staticNoiseLevel = 0;
+                    this.filterCutoff = 2000;
+                }
+
+                toJSON() {
+                    return {
+                        staticNoiseLevel: this.staticNoiseLevel,
+                        filterCutoff: this.filterCutoff,
+                    };
+                }
+
+                fromJSON(json) {
+                    Object.assign(this, json);
+                }
+            }
+
+            class RhythmGenerator {
+                constructor(melodySettings) {
+                    this.resetPattern();
+                    this.melodySettings = melodySettings;
+                }
+
+                resetPattern() {
+                    this.rhythmicSeed = Math.random();
+                    this.lastOctave = 1;
+                    this.lastNotePlayed = 0;
+                }
+
+                // Returns a value between 0 and 1 based on position and seed
+                getPseudoRandomValue(position) {
+                    return this.frac(
+                        Math.sin(
+                            position * 12.9898 + this.rhythmicSeed * 78.233,
+                        ) * 43758.5453,
+                    );
+                }
+
+                getWeightedOctave(range) {
+                    const weights = [];
+                    for (let i = 0; i < range; i++) {
+                        weights[i] =
+                            1 - Math.abs((i - (range - 1) / 2) / range);
+                    }
+                    let random = Math.random();
+                    let sum = 0;
+                    for (let i = 0; i < weights.length; i++) {
+                        sum += weights[i];
+                        if (random <= sum) {
+                            return i;
+                        }
+                        random -= weights[i];
+                    }
+                    return 0;
+                }
+                getSmoothedOctave(range) {
+                    const rawOctave = this.getWeightedOctave(range);
+                    // Blend with previous octave for smoother transitions
+                    const smoothedOctave = Math.round(
+                        this.lastOctave * 0.6 + rawOctave * 0.4,
+                    );
+                    this.lastOctave = smoothedOctave;
+                    return Math.min(Math.max(0, smoothedOctave), range - 1); // Clamp to valid range
+                }
+
+                frac(n) {
+                    return n - Math.floor(n);
+                }
+
+                shouldPlayNote(step, measure) {
+                    // Get a consistent random value for this step
+                    const randomValue = this.getPseudoRandomValue(
+                        step + measure * 16,
+                    );
+
+                    // Base probability from rhythm density
+                    let probability = this.melodySettings.rhythmDensity;
+
+                    // Reduce probability if the last note was played (prevents cluttering)
+                    if (step - this.lastNotePlayed < 2) {
+                        probability *= 0.3;
+                    }
+                    // console.log("randomValue: con", randomValue, probability);
+                    // Increase probability on strong beats (1, 5, 9, 13)
+                    if (step % 4 === 0) {
+                        probability *= 1.5;
+                    }
+                    // Increase probability on backbeats (3, 7, 11, 15)
+                    else if (step % 4 === 2) {
+                        probability *= 1.2;
+                    }
+                    // Apply syncopation
+                    else {
+                        probability *= this.melodySettings.syncopationAmount;
+                    }
+
+                    // Apply rhythm variation
+                    probability *=
+                        1 +
+                        this.melodySettings.rhythmVariation *
+                            (randomValue - 0.5);
+
+                    // Clamp probability between 0 and 1
+                    probability = Math.max(0, Math.min(1, probability));
+
+                    return randomValue < probability;
+                }
+
+                getNoteDuration(step, measure) {
+                    const randomValue = this.getPseudoRandomValue(
+                        step + measure * 16 + 0.5,
+                    );
+                    const variation =
+                        1 +
+                        this.melodySettings.rhythmVariation *
+                            (randomValue - 0.5) *
+                            0.5;
+                    return this.melodySettings.noteLength * variation;
+                }
+            }
+
+            // Audio utility functions
+            function makeDistortionCurve(amount) {
+                const n_samples = 44100;
+                const curve = new Float32Array(n_samples);
+                const deg = Math.PI / 180;
+                for (let i = 0; i < n_samples; ++i) {
+                    const x = (i * 2) / n_samples - 1;
+                    curve[i] =
+                        ((3 + amount) * x * 20 * deg) /
+                        (Math.PI + amount * Math.abs(x));
+                }
+                return curve;
+            }
+
+            function createCrackleNoise(audioCtx) {
+                const bufferSize = audioCtx.sampleRate * 0.1;
+                const buffer = audioCtx.createBuffer(
+                    1,
+                    bufferSize,
+                    audioCtx.sampleRate,
+                );
+                const data = buffer.getChannelData(0);
+
+                for (let i = 0; i < bufferSize; i++) {
+                    let noise = Math.random() * 2 - 1;
+                    if (Math.random() < 0.0005) noise *= 3;
+                    if (Math.random() < 0.05) noise *= 2;
+                    data[i] = noise;
+                }
+                return buffer;
+            }
+
+            class LofiGenerator {
+                constructor() {
+                    this.audioSettings = new AudioSettings();
+                    this.synthSettings = new SynthSettings();
+                    this.drumSettings = new DrumSettings();
+                    this.melodySettings = new MelodySettings();
+                    this.effectSettings = new EffectSettings();
+                    this.rhythmGenerator = new RhythmGenerator(
+                        this.melodySettings,
+                    );
+
+                    this.audioContext = null;
+                    this.masterGain = null;
+                    this.distortionNode = null;
+                    this.staticNoiseNode = null;
+                    this.staticNoiseGain = null;
+
+                    this.isPlaying = false;
+                    this.schedulerInterval = null;
+                    this.nextNoteTime = 0.0;
+                    this.current16thNote = 0;
+
+                    this.pentatonicIntervals = [0, 2, 4, 7, 9]; // Default to major pentatonic
+                }
+                init() {
+                    this.audioContext = new (window.AudioContext ||
+                        window.webkitAudioContext)();
+                    this.masterGain = this.audioContext.createGain();
+                    this.masterGain.connect(this.audioContext.destination);
+
+                    this.initDistortion();
+                    this.createStaticNoise();
+                    this.bindUIEvents();
+                }
+
+                initDistortion() {
+                    this.distortionNode = this.audioContext.createWaveShaper();
+                    this.distortionNode.curve = makeDistortionCurve(20);
+                    this.distortionNode.oversample = "4x";
+                    this.distortionNode.connect(this.masterGain);
+                }
+                addGhostNotes(time, velocity) {
+                    return velocity * (0.7 + Math.random() * 0.3);
+                }
+                createStaticNoise() {
+                    const baseNoiseNode =
+                        this.audioContext.createBufferSource();
+                    const crackleNoiseNode =
+                        this.audioContext.createBufferSource();
+
+                    // Create base noise
+                    const baseNoiseBuffer = this.audioContext.createBuffer(
+                        1,
+                        this.audioContext.sampleRate * 2,
+                        this.audioContext.sampleRate,
+                    );
+                    const baseNoiseData = baseNoiseBuffer.getChannelData(0);
+                    for (let i = 0; i < baseNoiseBuffer.length; i++) {
+                        baseNoiseData[i] = Math.random() * 2 - 1;
+                    }
+
+                    // Create crackle noise
+                    const crackleBuffer = createCrackleNoise(this.audioContext);
+
+                    baseNoiseNode.buffer = baseNoiseBuffer;
+                    crackleNoiseNode.buffer = crackleBuffer;
+
+                    baseNoiseNode.loop = true;
+                    crackleNoiseNode.loop = true;
+
+                    const baseFilter = this.audioContext.createBiquadFilter();
+                    const crackleFilter =
+                        this.audioContext.createBiquadFilter();
+
+                    baseFilter.type = "lowpass";
+                    crackleFilter.type = "highpass";
+                    baseFilter.frequency.value = 8000;
+                    crackleFilter.frequency.value = 4000;
+
+                    this.staticNoiseGain = this.audioContext.createGain();
+                    const crackleGain = this.audioContext.createGain();
+
+                    baseNoiseNode.connect(baseFilter);
+                    crackleNoiseNode.connect(crackleFilter);
+                    baseFilter.connect(this.staticNoiseGain);
+                    crackleFilter.connect(crackleGain);
+
+                    this.staticNoiseGain.connect(this.masterGain);
+                    crackleGain.connect(this.masterGain);
+
+                    this.staticNoiseGain.gain.value = 0;
+                    crackleGain.gain.value = 0;
+
+                    this.staticNoiseNode = {
+                        base: baseNoiseNode,
+                        crackle: crackleNoiseNode,
+                        crackleGain: crackleGain,
+                    };
+
+                    baseNoiseNode.start();
+                    crackleNoiseNode.start();
+                }
+
+                scheduleNote(time, frequency, duration) {
+                    const osc1 = this.audioContext.createOscillator();
+                    const osc2 = this.audioContext.createOscillator();
+
+                    osc1.type = this.synthSettings.osc1Waveform;
+                    osc2.type = this.synthSettings.osc2Waveform;
+
+                    osc1.frequency.setValueAtTime(frequency, time);
+                    osc2.frequency.setValueAtTime(frequency, time);
+                    osc2.detune.setValueAtTime(
+                        this.synthSettings.detuneAmount,
+                        time,
+                    );
+
+                    const osc1Gain = this.audioContext.createGain();
+                    const osc2Gain = this.audioContext.createGain();
+
+                    osc1Gain.gain.setValueAtTime(
+                        this.synthSettings.oscMix,
+                        time,
+                    );
+                    osc2Gain.gain.setValueAtTime(
+                        1 - this.synthSettings.oscMix,
+                        time,
+                    );
+
+                    const noteGain = this.audioContext.createGain();
+                    noteGain.gain.setValueAtTime(0.001, time);
+                    noteGain.gain.exponentialRampToValueAtTime(
+                        0.3 * this.drumSettings.volumes.synth,
+                        time + 0.01,
+                    );
+                    noteGain.gain.exponentialRampToValueAtTime(
+                        0.001,
+                        time + duration,
+                    );
+
+                    const filter = this.audioContext.createBiquadFilter();
+                    filter.type = "lowpass";
+                    filter.frequency.setValueAtTime(
+                        this.effectSettings.filterCutoff,
+                        time,
+                    );
+
+                    osc1.connect(osc1Gain);
+                    osc2.connect(osc2Gain);
+                    osc1Gain.connect(noteGain);
+                    osc2Gain.connect(noteGain);
+                    noteGain.connect(filter);
+                    filter.connect(this.distortionNode);
+
+                    osc1.start(time);
+                    osc2.start(time);
+                    osc1.stop(time + duration);
+                    osc2.stop(time + duration);
+                }
+
+                scheduleKick(time) {
+                    if (time < 0) {
+                        time = 0.0;
+                    }
+                    const velocity = this.addGhostNotes(time, kickVolume);
+                    const osc = this.audioContext.createOscillator();
+                    const kickGain = this.audioContext.createGain();
+
+                    osc.frequency.setValueAtTime(150, time);
+                    osc.frequency.exponentialRampToValueAtTime(
+                        0.01,
+                        time + 0.5,
+                    );
+
+                    kickGain.gain.setValueAtTime(
+                        this.drumSettings.volumes.kick,
+                        time,
+                    );
+                    kickGain.gain.exponentialRampToValueAtTime(
+                        0.01,
+                        time + 0.5,
+                    );
+
+                    osc.connect(kickGain);
+                    kickGain.connect(this.masterGain);
+
+                    osc.start(time);
+                    osc.stop(time + 0.5);
+                }
+                scheduleSnare(time) {
+                    if (time < 0) {
+                        time = 0.0;
+                    }
+                    const bufferSize = this.audioContext.sampleRate * 0.2;
+                    const buffer = this.audioContext.createBuffer(
+                        1,
+                        bufferSize,
+                        this.audioContext.sampleRate,
+                    );
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = Math.random() * 2 - 1;
+                    }
+                    const noise = this.audioContext.createBufferSource();
+                    noise.buffer = buffer;
+
+                    const noiseFilter = this.audioContext.createBiquadFilter();
+                    noiseFilter.type = "bandpass";
+                    noiseFilter.frequency.setValueAtTime(1000, time);
+
+                    const noiseGain = this.audioContext.createGain();
+                    noiseGain.gain.setValueAtTime(
+                        1 * this.drumSettings.volumes.snare,
+                        time,
+                    );
+                    noiseGain.gain.exponentialRampToValueAtTime(
+                        0.01,
+                        time + 0.2,
+                    );
+
+                    noise.connect(noiseFilter);
+                    noiseFilter.connect(noiseGain);
+                    noiseGain.connect(this.masterGain);
+
+                    noise.start(time);
+                    noise.stop(time + 0.2);
+                }
+                scheduleHiHat(time) {
+                    if (time < 0) {
+                        time = 0.0;
+                    }
+                    const bufferSize = this.audioContext.sampleRate * 0.05;
+                    const buffer = this.audioContext.createBuffer(
+                        1,
+                        bufferSize,
+                        this.audioContext.sampleRate,
+                    );
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = Math.random() * 2 - 1;
+                    }
+                    const noise = this.audioContext.createBufferSource();
+                    noise.buffer = buffer;
+
+                    const noiseFilter = this.audioContext.createBiquadFilter();
+                    noiseFilter.type = "highpass";
+                    noiseFilter.frequency.setValueAtTime(7000, time);
+
+                    const noiseGain = this.audioContext.createGain();
+                    noiseGain.gain.setValueAtTime(
+                        1 * this.drumSettings.volumes.hihat,
+                        time,
+                    );
+                    noiseGain.gain.exponentialRampToValueAtTime(
+                        0.01,
+                        time + 0.05,
+                    );
+
+                    noise.connect(noiseFilter);
+                    noiseFilter.connect(noiseGain);
+                    noiseGain.connect(this.masterGain);
+
+                    noise.start(time);
+                    noise.stop(time + 0.05);
+                }
+
+                addSwing(time, step) {
+                    if (step % 2 === 1) {
+                        // Apply swing to odd-numbered steps
+                        return time + this.drumSettings.swing * 0.1;
+                    }
+                    return time;
+                }
+
+                addRandomTiming(time) {
+                    return (
+                        time +
+                        (Math.random() - 0.5) *
+                            this.drumSettings.randomization *
+                            0.05
+                    );
+                }
+
+                scheduler() {
+                    this.nextNoteTime = Math.max(
+                        this.nextNoteTime,
+                        this.audioContext.currentTime,
+                    );
+                    while (
+                        this.nextNoteTime <
+                        this.audioContext.currentTime + 0.1
+                    ) {
+                        const step = this.current16thNote % 16;
+                        const measure = Math.floor(this.current16thNote / 16);
+                        const currentPattern =
+                            this.drumSettings.patterns[
+                                this.audioSettings.beatPattern
+                            ][step];
+
+                        // Schedule drums
+                        if (Math.random() < currentPattern.kick) {
+                            const kickTime = this.addRandomTiming(
+                                this.addSwing(this.nextNoteTime, step),
+                            );
+                            this.scheduleKick(kickTime);
+                        }
+
+                        if (Math.random() < currentPattern.snare) {
+                            const snareTime = this.addRandomTiming(
+                                this.addSwing(this.nextNoteTime, step),
+                            );
+                            this.scheduleSnare(snareTime);
+                        }
+
+                        if (Math.random() < currentPattern.hihat) {
+                            const hihatTime = this.addRandomTiming(
+                                this.addSwing(this.nextNoteTime, step),
+                            );
+                            this.scheduleHiHat(hihatTime);
+                        }
+                        // console.log("Note probability check:", {
+                        //     step,
+                        //     probability: this.melodySettings.rhythmDensity,
+                        //     likelihood: this.rhythmGenerator.shouldPlayNote(
+                        //         step,
+                        //         measure,
+                        //     ),
+                        // });
+
+                        // Schedule melody
+                        if (
+                            this.rhythmGenerator.shouldPlayNote(step, measure)
+                        ) {
+                            const noteIndex = Math.floor(
+                                Math.random() * this.pentatonicIntervals.length,
+                            );
+
+                            // Use smoothed octave instead of direct random selection
+                            const octave =
+                                this.rhythmGenerator.getSmoothedOctave(
+                                    this.audioSettings.octaveRange,
+                                );
+
+                            const semitoneOffset =
+                                this.pentatonicIntervals[noteIndex] +
+                                parseInt(this.audioSettings.key) +
+                                (this.audioSettings.lowestOctave - 3) * 12 +
+                                octave * 12;
+
+                            const baseFreq = 220;
+                            const freq =
+                                baseFreq * Math.pow(2, semitoneOffset / 12);
+
+                            const duration =
+                                this.rhythmGenerator.getNoteDuration(
+                                    step,
+                                    measure,
+                                );
+                            this.scheduleNote(
+                                this.nextNoteTime,
+                                freq,
+                                duration,
+                            );
+
+                            this.rhythmGenerator.lastNotePlayed = step;
+                        }
+
+                        const secondsPerBeat = 60.0 / this.audioSettings.tempo;
+                        this.nextNoteTime += secondsPerBeat / 4.0;
+                        this.current16thNote++;
+                    }
+                }
+
+                start() {
+                    if (!this.audioContext) this.init();
+                    // Resume the audio context if it's suspended
+                    if (this.audioContext.state === "suspended") {
+                        this.audioContext.resume();
+                    }
+                    this.isPlaying = true;
+                    this.nextNoteTime = Math.max(
+                        0.0,
+                        this.audioContext.currentTime,
+                    );
+                    this.current16thNote = 0; // Reset the note counter
+                    this.schedulerInterval = setInterval(
+                        () => this.scheduler(),
+                        25,
+                    );
+                }
+
+                stop() {
+                    this.isPlaying = false;
+                    if (this.schedulerInterval) {
+                        clearInterval(this.schedulerInterval);
+                        this.schedulerInterval = null;
+                    }
+                }
+                bindUIEvents() {
+                    document
+                        .getElementById("beatPatternSelect")
+                        .addEventListener("change", (e) => {
+                            if (e.target.value === "random") {
+                                this.drumSettings.randomizeCurrentPattern();
+                            }
+                            this.audioSettings.beatPattern = e.target.value;
+                        });
+
+                    document
+                        .getElementById("randomizePattern")
+                        .addEventListener("click", () => {
+                            this.drumSettings.randomizeCurrentPattern();
+                            document.getElementById("beatPatternSelect").value =
+                                "random";
+                            this.audioSettings.beatPattern = "random";
+                        });
+                    // Main Controls
+                    document
+                        .getElementById("tempoInput")
+                        .addEventListener("input", (e) => {
+                            this.audioSettings.tempo = parseInt(e.target.value);
+                            document.getElementById("tempoValue").textContent =
+                                e.target.value;
+                        });
+
+                    document
+                        .getElementById("beatPatternSelect")
+                        .addEventListener("change", (e) => {
+                            this.audioSettings.beatPattern = e.target.value;
+                        });
+
+                    document
+                        .getElementById("exportBtn")
+                        .addEventListener("click", () => {
+                            const settings = lofiGenerator.exportSettings();
+                            const blob = new Blob([settings], {
+                                type: "application/json",
+                            });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = "lofi-settings.json";
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                        });
+
+                    // Synth Settings
+                    document
+                        .getElementById("keySelect")
+                        .addEventListener("change", (e) => {
+                            this.audioSettings.key = parseInt(e.target.value);
+                        });
+
+                    document
+                        .getElementById("scaleModeSelect")
+                        .addEventListener("change", (e) => {
+                            this.audioSettings.scaleMode = e.target.value;
+                            this.pentatonicIntervals =
+                                e.target.value === "major"
+                                    ? [0, 2, 4, 7, 9]
+                                    : [0, 3, 5, 7, 10];
+                        });
+
+                    document
+                        .getElementById("lowestOctaveSelect")
+                        .addEventListener("change", (e) => {
+                            this.audioSettings.lowestOctave = parseInt(
+                                e.target.value,
+                            );
+                        });
+
+                    document
+                        .getElementById("octaveRangeSelect")
+                        .addEventListener("change", (e) => {
+                            this.audioSettings.octaveRange = parseInt(
+                                e.target.value,
+                            );
+                        });
+
+                    document
+                        .getElementById("osc1WaveformSelect")
+                        .addEventListener("change", (e) => {
+                            this.synthSettings.osc1Waveform = e.target.value;
+                        });
+
+                    document
+                        .getElementById("osc2WaveformSelect")
+                        .addEventListener("change", (e) => {
+                            this.synthSettings.osc2Waveform = e.target.value;
+                        });
+
+                    document
+                        .getElementById("detuneAmount")
+                        .addEventListener("input", (e) => {
+                            this.synthSettings.detuneAmount = parseInt(
+                                e.target.value,
+                            );
+                            document.getElementById("detuneValue").textContent =
+                                e.target.value;
+                        });
+
+                    document
+                        .getElementById("oscMix")
+                        .addEventListener("input", (e) => {
+                            this.synthSettings.oscMix =
+                                parseInt(e.target.value) / 100;
+                            document.getElementById("oscMixValue").textContent =
+                                e.target.value;
+                        });
+
+                    // Rhythm Settings
+                    document
+                        .getElementById("rhythmDensity")
+                        .addEventListener("input", (e) => {
+                            this.melodySettings.rhythmDensity =
+                                parseInt(e.target.value) / 100;
+                            document.getElementById(
+                                "densityValue",
+                            ).textContent = e.target.value;
+                        });
+
+                    document
+                        .getElementById("syncopationAmount")
+                        .addEventListener("input", (e) => {
+                            this.melodySettings.syncopationAmount =
+                                parseInt(e.target.value) / 100;
+                            document.getElementById(
+                                "syncopationValue",
+                            ).textContent = e.target.value;
+                        });
+
+                    document
+                        .getElementById("noteLength")
+                        .addEventListener("input", (e) => {
+                            this.melodySettings.noteLength =
+                                parseInt(e.target.value) / 100;
+                            document.getElementById(
+                                "noteLengthValue",
+                            ).textContent =
+                                this.melodySettings.noteLength.toFixed(2);
+                        });
+                    document
+                        .getElementById("drumSwing")
+                        .addEventListener("input", (e) => {
+                            this.drumSettings.swing =
+                                parseInt(e.target.value) / 100;
+                            document.getElementById("swingValue").textContent =
+                                e.target.value;
+                        });
+                    document
+                        .getElementById("drumRandomization")
+                        .addEventListener("input", (e) => {
+                            this.drumSettings.randomization =
+                                parseInt(e.target.value) / 100;
+                            document.getElementById(
+                                "randomizationValue",
+                            ).textContent = e.target.value;
+                        });
+
+                    document
+                        .getElementById("rhythmVariation")
+                        .addEventListener("input", (e) => {
+                            this.melodySettings.rhythmVariation =
+                                parseInt(e.target.value) / 100;
+                            document.getElementById(
+                                "variationValue",
+                            ).textContent = e.target.value;
+                        });
+
+                    // Volume Controls
+                    document
+                        .getElementById("synthVolume")
+                        .addEventListener("input", (e) => {
+                            this.drumSettings.volumes.synth =
+                                parseInt(e.target.value) / 100;
+                            document.getElementById(
+                                "synthVolumeValue",
+                            ).textContent = e.target.value;
+                        });
+
+                    document
+                        .getElementById("kickVolume")
+                        .addEventListener("input", (e) => {
+                            this.drumSettings.volumes.kick =
+                                parseInt(e.target.value) / 100;
+                            document.getElementById(
+                                "kickVolumeValue",
+                            ).textContent = e.target.value;
+                        });
+
+                    document
+                        .getElementById("snareVolume")
+                        .addEventListener("input", (e) => {
+                            this.drumSettings.volumes.snare =
+                                parseInt(e.target.value) / 100;
+                            document.getElementById(
+                                "snareVolumeValue",
+                            ).textContent = e.target.value;
+                        });
+
+                    document
+                        .getElementById("hihatVolume")
+                        .addEventListener("input", (e) => {
+                            this.drumSettings.volumes.hihat =
+                                parseInt(e.target.value) / 100;
+                            document.getElementById(
+                                "hihatVolumeValue",
+                            ).textContent = e.target.value;
+                        });
+
+                    // Audio Effects
+                    document
+                        .getElementById("filterSlider")
+                        .addEventListener("input", (e) => {
+                            this.effectSettings.filterCutoff = parseInt(
+                                e.target.value,
+                            );
+                            document.getElementById("filterValue").textContent =
+                                e.target.value;
+                        });
+
+                    document
+                        .getElementById("staticNoiseLevel")
+                        .addEventListener("input", (e) => {
+                            this.effectSettings.staticNoiseLevel = parseInt(
+                                e.target.value,
+                            );
+                            document.getElementById(
+                                "staticNoiseValue",
+                            ).textContent = e.target.value;
+
+                            if (this.staticNoiseNode) {
+                                const baseGain =
+                                    (this.effectSettings.staticNoiseLevel /
+                                        100) *
+                                    0.05;
+                                const crackleGain =
+                                    (this.effectSettings.staticNoiseLevel /
+                                        100) *
+                                    0.15;
+
+                                this.staticNoiseGain.gain.setTargetAtTime(
+                                    baseGain,
+                                    this.audioContext.currentTime,
+                                    0.1,
+                                );
+                                this.staticNoiseNode.crackleGain.gain.setTargetAtTime(
+                                    crackleGain,
+                                    this.audioContext.currentTime,
+                                    0.1,
+                                );
+                            }
+                        });
+                }
+
+                exportSettings() {
+                    const settings = {
+                        audio: this.audioSettings.toJSON(),
+                        synth: this.synthSettings.toJSON(),
+                        drums: this.drumSettings.toJSON(),
+                        melody: this.melodySettings.toJSON(),
+                        effects: this.effectSettings.toJSON(),
+                    };
+                    return JSON.stringify(settings); // Stringify here, at the final step
+                }
+            }
+            const lofiGenerator = new LofiGenerator();
+            document
+                .getElementById("playPauseBtn")
+                .addEventListener("click", function () {
+                    if (!lofiGenerator.isPlaying) {
+                        lofiGenerator.start();
+                        this.textContent = "Stop";
+                    } else {
+                        lofiGenerator.stop();
+                        this.textContent = "Play";
+                    }
+                });
+        </script>
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

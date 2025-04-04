@@ -1,0 +1,1043 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Pawan's Website</title>
+        <!-- Bootstrap CSS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <link
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <!-- Icons -->
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        />
+
+        <!-- MathJax -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <!-- Navigation -->
+        <nav
+            class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top"
+        >
+            <div class="container">
+                <a class="navbar-brand" href="#">Pawan Jayakumar</a>
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+                    aria-controls="navbarNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a
+                                href="#"
+                                class="nav-link active"
+                                data-section="home"
+                                >Home</a
+                            >
+                        </li>
+                        <!-- in the works... -->
+                        <!-- <li class="nav-item">
+                            <a href="#" class="nav-link" data-section="research"
+                                >Research</a
+                            >
+                        </li> -->
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-section="blog"
+                                >Blog</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Content Container -->
+        <div id="page-content">
+            <!-- Home Page Content -->
+            <div
+                id="home"
+                class="content-section py-5 active"
+                style="display: block"
+            >
+                <div class="container">
+                    <div class="row align-items-center py-5">
+                        <!-- left doodles -->
+                        <div class="col-lg-2"></div>
+                        <!-- Main content -->
+                        <div class="col-12 col-md-10 col-lg-8 mx-auto">
+                            <!-- Links and photo -->
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <img
+                                        src="images/about.jpg"
+                                        alt="Researcher Photo"
+                                        class="img-fluid rounded-square mb-3"
+                                        style="width: 100%"
+                                    />
+                                    <div class="social-links mb-4">
+                                        <a
+                                            href="mailto:pjayakumar@ucsd.edu"
+                                            class="social-link"
+                                        >
+                                            <i class="material-icons">email</i>
+                                            <span>pjayakumar@ucsd.edu</span>
+                                        </a>
+                                        <a
+                                            href="https://github.com/vayuda"
+                                            target="_blank"
+                                            class="social-link"
+                                        >
+                                            <img
+                                                src="images/logos/github-mark.png"
+                                                alt="GitHub"
+                                            />
+                                            <span>GitHub</span>
+                                        </a>
+                                        <a
+                                            href="https://x.com/Cr1msonAura"
+                                            target="_blank"
+                                            class="social-link"
+                                        >
+                                            <img
+                                                src="images/logos/xlogo-black.png"
+                                                alt="X"
+                                            />
+                                            <span>Twitter/X</span>
+                                        </a>
+                                        <a
+                                            href="https://www.linkedin.com/in/pawan-jayakumar-1b640318a/"
+                                            target="_blank"
+                                            class="social-link"
+                                        >
+                                            <img
+                                                src="images/logos/icons8-linkedin-50.png"
+                                                alt="LinkedIn"
+                                            />
+                                            <span>LinkedIn</span>
+                                        </a>
+                                        <a
+                                            href="documents/resume.pdf"
+                                            target="_blank"
+                                            class="social-link"
+                                        >
+                                            <i class="material-icons"
+                                                >description</i
+                                            >
+                                            <span>Resume</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <p class="mb-4" style="font-size: 1.24rem">
+                                        As a computer science master's student
+                                        at UCSD, I spend a lot of time thinking
+                                        about how we explore and discover new
+                                        things, both in research and in life.
+                                        This website is an extension of that
+                                        exploration, a place where I share all
+                                        the cool things I've worked on and talk
+                                        about what interests me.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- right doodles -->
+                        <div class="col-lg-2" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Blog Page Content -->
+        <div id="blog" class="content-section py-5">
+            <!-- Blog Preview Section -->
+            <div id="blog-previews" class="container">
+                <h3 style="color: var(--dark)" class="display-4 mb-4">Posts</h3>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card blog-card shadow-sm h-100">
+                            <div class="card-body">
+                                <h4>
+                                    ClosedAI, Open Secrets: How ChatGPT Finds
+                                    Its Own API Keys
+                                </h4>
+                                <p class="text-muted">
+                                    Posted on March 5, 2025
+                                </p>
+                                <p>
+                                    My friend Nikhil and I uncovered something
+                                    unexpected: OpenAI's Deep Research feature
+                                    (which I will refer to as ODR) can be used
+                                    to hunt down exposed API keys in public
+                                    GitHub and HuggingFace repositories.
+                                    Ironically this includes the very keys
+                                    needed to access OpenAI's own services. This
+                                    feature was recently made available to
+                                    $20/month Plus subscribers, putting a
+                                    powerful web search tool in many more hands.
+                                    The key concern to us...
+                                </p>
+                                <button
+                                    class="btn btn-outline-primary btn-sm read-more-btn"
+                                    data-post-id="deep-research"
+                                >
+                                    Read More
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card blog-card shadow-sm h-100">
+                            <div class="card-body">
+                                <h4>
+                                    The Beauty of Culinary Simplicity and
+                                    Ingredient Intentionality
+                                </h4>
+                                <p class="text-muted">
+                                    Posted on January 10, 2025
+                                </p>
+                                <p>
+                                    I found myself in the produce aisle at my
+                                    local grocery store, perplexed by the
+                                    dizzying array of apples in front of me.
+                                    Gala, Honeycrisp, Granny Smith, and many
+                                    others I've never even heard of. I'd love to
+                                    know what a "Snap Dragon" apple tastes like,
+                                    but the descriptions make it seem like just
+                                    about every apple is somewhat sweet,
+                                    somewhat tangy, and somewhat crisp. I
+                                    couldn't ponder much longer because I still
+                                    had ten other items to buy...
+                                </p>
+                                <button
+                                    class="btn btn-outline-primary btn-sm read-more-btn"
+                                    data-post-id="ingredient-selection"
+                                >
+                                    Read More
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Individual Blog Post Sections -->
+            <div id="blog-posts" class="container" style="display: none">
+                <!-- Deep Research Post -->
+                <div
+                    id="post-deep-research"
+                    class="blog-post"
+                    style="display: none color: var(--milk)"
+                >
+                    <button class="btn btn-outline-secondary mb-4 back-to-blog">
+                        ← Back to Posts
+                    </button>
+                    <h2
+                        style="
+                            color: var(--red);
+                            transform-origin: left;
+                            transform: scale(0.9);
+                            white-space: nowrap;
+                        "
+                        class="mb-3"
+                    >
+                        ClosedAI, Open Secrets: How ChatGPT Reveals Its Own API
+                        Keys
+                    </h2>
+                    <p class="text-muted">Last updated March 5th, 2025</p>
+                    <div class="post-content">
+                        <p>
+                            My friend Nikhil and I uncovered something
+                            unexpected: OpenAI's Deep Research feature (which I
+                            will refer to as ODR) can be used to hunt down
+                            exposed API keys in public GitHub and HuggingFace
+                            repositories. Ironically this includes the very keys
+                            needed to access OpenAI's own services. This feature
+                            was recently made available to $20/month Plus
+                            subscribers, putting a powerful web search tool in
+                            many more hands. The key concern to us (no pun
+                            intended) was that we did not employ any
+                            sophisticated jailbreaking technique to achieve this
+                            outcome: anyone could have done this too.
+                        </p>
+                        <h3 id="what-is-deep-research">
+                            What is Deep Research?
+                        </h3>
+                        <p>
+                            This term has begun to refer to a broad group of LLM
+                            tools augmented with web search capabilities. ODR
+                            specifically empowers ChatGPT to automatically
+                            search the web to analyze and parse content from a
+                            broad number of sources and provide a comprehensive
+                            summary to user queries. For example, you can ask it
+                            to search the market for a particular bicycle that
+                            matches your height, budget, and features you really
+                            need. It will then access dozens of websites, parse
+                            the listings, and synthesize a list for you in about
+                            five minutes.
+                        </p>
+                        <p>
+                            Traditional chat usage has been to ask a question
+                            and get an answer instantly, but now we are seeing
+                            an evolution in how LLM's are being used as a part
+                            of larger systems capable of doing longer horizon
+                            tasks. In fact, OpenAI wasn't the first to release
+                            this kind of tool. Google released a product with
+                            the same name late last year, Grok just added this
+                            feature as well, and Perplexity's whole business is
+                            integrating LLM's with web search. While these tools
+                            represent the cutting edge of AI assistance, they
+                            can also create unexpected security implications -
+                            as we discovered recently.
+                        </p>
+                        <h3 id="our-serendipitous-discovery">
+                            Our Serendipitous Discovery
+                        </h3>
+                        <p>
+                            While working on a project for an LLM security
+                            class, my partner Nikhil and I were using Gemini's
+                            free fine-tuning service, which made me wonder
+                            whether OpenAI had similar free offerings. To my
+                            dismay, I found that they had discontinued their API
+                            sign up promotion for free api credits long ago.
+                        </p>
+                        <p>
+                            This made me recollect the time when ChatGPT was
+                            first released, how it produced a flock of
+                            unseasoned developers who knew nothing about
+                            security and ended up exposing their API keys
+                            online. Mostly as a joke, and partly wishful
+                            thinking, I wondered whether ChatGPT's new web
+                            search feature could be used to find these secrets.
+                            Here is what I tried below:
+                        </p>
+                        <figure style="text-align: center; margin: 20px 0">
+                            <img
+                                src="images/deep-research/chatgpt-ws.png"
+                                style="max-width: 100%"
+                            />
+                            <figcaption
+                                style="
+                                    font-style: italic;
+                                    color: var(--coffee);
+                                    margin-top: 10px;
+                                "
+                            >
+                                Looks like the search feature isn't able to
+                                scrape arbitrary websites.
+                            </figcaption>
+                        </figure>
+                        <p>
+                            While I thought I ended up empty handed, Nikhil
+                            noticed that it didn't refuse the request. Having a
+                            plus membership, he tried the prompt with ODR along
+                            with a few clarifying follow up statements. The end
+                            result is shown below:
+                        </p>
+                        <figure style="text-align: center; margin: 20px 0">
+                            <img
+                                src="images/deep-research/ODR result.png"
+                                style="max-width: 100%"
+                            />
+                            <figcaption
+                                style="
+                                    font-style: italic;
+                                    color: var(--coffee);
+                                    margin-top: 10px;
+                                "
+                            >
+                                ODR was successfully able to scrape enough
+                                repositories to find keys.
+                            </figcaption>
+                        </figure>
+                        <p>
+                            The first deep search gave about a dozen or so keys,
+                            of which one actually worked (we responsibly
+                            notified the owner of the repository after
+                            confirming the key was active). A naive second
+                            attempt did not yield any new active keys, but with
+                            limited queries per month, we didn't get to
+                            substantially test this.
+                        </p>
+                        <p>
+                            This initial success raised an important question:
+                            was this capability unique to OpenAI's
+                            implementation, or could other similar tools be used
+                            in the same way? Both Perplexity and Grok have
+                            similar features available for free. I tried the
+                            exact same prompt and some variations, but
+                            ultimately none were successful because they said
+                            they werent really capable of parsing through
+                            websites like a human would. It seems they just have
+                            access to some limited search API.
+                        </p>
+                        <p>
+                            This highlights a key difference between Perplexity
+                            and ODR. Perplexity simply utilizes its pre-training
+                            data and any relevant data that comes from simple
+                            searches. On the other hand, ODR is capable of
+                            performing real time analysis by running python
+                            code. This is evident when looking at the provided
+                            reasoning trace:
+                        </p>
+                        <figure style="text-align: center; margin: 20px 0">
+                            <img
+                                src="images/deep-research/ODR trace.png"
+                                style="max-width: 70%"
+                            />
+                            <figcaption
+                                style="
+                                    font-style: italic;
+                                    color: var(--coffee);
+                                    margin-top: 10px;
+                                "
+                            >
+                                It seems to be going through a loop of thinking
+                                about what to search next, retrieving that
+                                information, and then analyzing it in Python.
+                                This last step is where the magic probably
+                                happens.
+                            </figcaption>
+                        </figure>
+                        <h3 id="how-it-differs-from-historical-approaches">
+                            How it Differs From Historical Approaches
+                        </h3>
+                        <p>
+                            While our discovery might alarm some, security
+                            professionals will recognize that automated secret
+                            scanning isn't new. Tools for automatically scanning
+                            repositories for exposed secrets have existed for
+                            years. In fact, Github has
+                            <a
+                                href="https://docs.github.com/en/code-security/secret-scanning/introduction/about-secret-scanning"
+                                target="_blank"
+                            >
+                                its own internal scanner</a
+                            >
+                            that can be used for free for any public repository.
+                        </p>
+                        <p>
+                            Traditional scanning tools like
+                            <a
+                                href="https://github.com/michenriksen/gitrob"
+                                target="_blank"
+                                >GitRob</a
+                            >
+                            and
+                            <a
+                                href="https://github.com/trufflesecurity/trufflehog"
+                                target="_blank"
+                                >TruffleHog</a
+                            >
+                            approach the problem through:
+                        </p>
+                        <ul>
+                            <li>
+                                Using regular expressions to match known formats
+                                of API keys
+                            </li>
+                            <li>
+                                Measuring the randomness of strings to identify
+                                potential keys
+                            </li>
+                            <li>
+                                Examining all commits, not just current
+                                repository state
+                            </li>
+                        </ul>
+                        <p>
+                            While we can't know exactly how Deep Research works
+                            internally, our observations suggest it might differ
+                            in these ways:
+                        </p>
+                        <ul>
+                            <li>
+                                It appears to leverage web scraping rather than
+                                direct API access
+                            </li>
+                            <li>
+                                It seems to reason about where its most likely
+                                to find keys (like .env files)
+                            </li>
+                            <li>
+                                It seems capable of implementing rudimentary
+                                scripts to perform pattern recognition while
+                                also using context from surrounding code
+                            </li>
+                        </ul>
+                        <p>
+                            What's most significant is not necessarily advanced
+                            technical capabilities, but rather the
+                            accessibility. ODR packages existing scanning
+                            techniques into a user-friendly interface that
+                            requires no technical setup or specialized
+                            knowledge. This democratization of security tooling
+                            is the real change, as it puts previously
+                            specialized techniques into anyone's hands through a
+                            simple chat interface.
+                        </p>
+                        <p>
+                            In our limited testing, we can't conclusively state
+                            that it's more effective than traditional tools, but
+                            in a rapidly evolving landscape, many capabilities
+                            may seem to emerge out of no where. Just remember
+                            how most of the world was shocked at the launch of
+                            ChatGPT in 2022 even though anyone who had been
+                            paying attention could have seen it coming. For
+                            better or worse, these tech giants control destiny.
+                            If they make a shiny new tool, everyone will try to
+                            recreate it, including open source versions. This
+                            provides more and more opportunities for adversaries
+                            to find exploits.
+                        </p>
+                        <h3 id="highlighting-the-need-for-red-teaming">
+                            Highlighting the Need for Red Teaming
+                        </h3>
+                        <p>
+                            GitHub repositories, while often used for code
+                            sharing and collaboration, are not secure storage
+                            locations for sensitive credentials. In 2016, Uber's
+                            AWS account
+                            <a
+                                href="https://www.ftc.gov/system/files/documents/cases/1523054_uber_technologies_revised_analysis.pdf"
+                                target="_blank"
+                            >
+                                was compromised</a
+                            >
+                            when hackers gained access to their GitHub account
+                            and found the credentials in stored in plain text.
+                            This allowed them to access the personal information
+                            of around 50 million users. They are not alone in
+                            this blunder: GitGaurdian's
+                            <a
+                                href="https://www.gitguardian.com/state-of-secrets-sprawl-report-2024"
+                                target="_blank"
+                            >
+                                State of Sprawl report
+                            </a>
+                            details the detection of millions of unique secrets
+                            within both public and private code repositories,
+                            and they seem to be finding more exposed secrets
+                            year over year. Yet many years later, the same issue
+                            that plagued Uber is now becoming easier to exploit,
+                            highlighting how security considerations often
+                            remain a secondary concern to functionality.
+                        </p>
+                        <p>
+                            In hindsight, this seemingly intuitive yet malicious
+                            use case of Deep Research likely went under the
+                            product team's radar because they were focused on
+                            intended applications rather than potential misuse.
+                            This oversight demonstrates a recurring pattern in
+                            AI development:
+                        </p>
+                        <ul>
+                            <li>
+                                A capability is released with legitimate use
+                                cases in mind
+                            </li>
+                            <li>
+                                The same capability enables unexpected misuse
+                                cases
+                            </li>
+                            <li>
+                                Only after public release do these misuse cases
+                                become apparent
+                            </li>
+                        </ul>
+                        <p>
+                            This is precisely why red teaming is crucial for AI
+                            systems. Effective red teams approach products with
+                            an adversarial mindset, asking not &quot;What was
+                            this designed to do?&quot; but &quot;How could this
+                            be misused?&quot; The challenge isn't just
+                            identifying technical exploits like jailbreaks or
+                            prompt injections, but also anticipating how normal
+                            features might intersect with sensitive domains in
+                            unexpected ways.&quot;
+                        </p>
+                        <p>
+                            As capabilities of these LLM agents increase, we
+                            must be increasingly aware of these adversarial use
+                            cases. Browser automation could be used for digital
+                            dumpster diving: systematically search through
+                            public data sources for specific types of
+                            information (financial data, personal details,
+                            internal documentation) that was accidentally made
+                            public. They can also aid in illegal operations. For
+                            example, these tools could potentially find and
+                            utilize credentials to create networks of accounts
+                            for crypto tumbling, wash trading, or market
+                            manipulation. Its important to re-iterate that these
+                            tools will only get stronger in the next few years.
+                        </p>
+                        <p>
+                            To this end, we should encourage more bounty events
+                            like
+                            <a
+                                href="https://www.anthropic.com/news/constitutional-classifiers"
+                                target="_blank"
+                            >
+                                Anthropic recently did </a
+                            >. They thought they had made progress towards
+                            making jailbreak-proof models, only to find that it
+                            had been broken within five days of releasing the
+                            bounty. Companies can also benefit from dedicated
+                            adversarial use teams that specifically focus on how
+                            features could be repurposed in unexpected ways.
+                            They would also benefit from ensuring that employees
+                            are aware of critical safety practices. After all,
+                            no lock is strong enough when you leave the door
+                            wide open.
+                        </p>
+                        <h2 id="acknowledgements">Acknowledgements</h2>
+                        <p>
+                            Shout out to Nikhil for helping me test ODR and for
+                            finding that it worked. You can check out his
+                            website
+                            <a
+                                href="https://ngautam222.github.io/Website-mine/#contact"
+                                target="_blank"
+                                >here</a
+                            >
+                            I also want to thank Prof. Earlence Fernandes for
+                            encouraging us to write about it and how to
+                            responsibly disclose this vulnerability. You can
+                            check out his website
+                            <a href="https://www.earlence.com/" target="_blank"
+                                >here</a
+                            >
+                        </p>
+                    </div>
+                </div>
+                <!-- Japanese Food Post -->
+                <div
+                    id="post-ingredient-selection"
+                    class="blog-post"
+                    style="display: none color: var(--milk)"
+                >
+                    <button class="btn btn-outline-secondary mb-4 back-to-blog">
+                        ← Back to Posts
+                    </button>
+                    <h2 class="mb-3">
+                        The Beauty of Culinary Simplicity and Ingredient
+                        Intentionality
+                    </h2>
+                    <p class="text-muted">Last updated January 10, 2025</p>
+                    <div class="post-content">
+                        <!-- Full post content goes here -->
+                        <h3 id="the-paradox-of-choice">
+                            The Paradox of Choice
+                        </h3>
+                        <p>
+                            I found myself in the produce aisle at my local
+                            grocery store, perplexed by the dizzying array of
+                            apples in front of me. Gala, Honeycrisp, Granny
+                            Smith, and many others I've never even heard of. I'd
+                            love to know what a "Snap Dragon" apple tastes like,
+                            but the descriptions make it seem like just about
+                            every apple is somewhat sweet, somewhat tangy, and
+                            somewhat crisp. I couldn't ponder much longer
+                            because I still had ten other items to buy.
+                        </p>
+                        <p>
+                            Whether you're the head chef or running errands like
+                            me, you may wonder which of these ever-increasing
+                            varieties is the best choice. The abundance of
+                            choice may lead to better dishes, but often leads to
+                            more confusion. Understanding the properties of each
+                            ingredient is therefore crucial to effective
+                            cooking. The foundation of any great dish is the
+                            careful thought and consideration that goes behind
+                            the ingredients used in it.
+                        </p>
+                        <p>
+                            A quote from
+                            <a
+                                href="https://zhengdongwang.com/2024/12/29/2024-letter.html"
+                                target="_blank"
+                            >
+                                Zhendong's 2024 year in review</a
+                            >
+                            prompted me to think more about this:
+                        </p>
+                        <blockquote>
+                            <p>
+                                This is a more general point that people may
+                                have made their minds up on already. People go
+                                to Japan to eat the absolute best quality of
+                                certain ingredients, accepting that they’re
+                                giving up on the diversity of produce and
+                                flavors from China and Taiwan. In that case,
+                                I’ll make a stronger claim: except for sushi,
+                                every single dish in Japanese cuisine is done
+                                better by another Asian cuisine: jiaozi over
+                                gyoza, pakora over tempura, pho over ramen, mul
+                                naengmyeon over soba, hot pot over shabu shabu,
+                                Indian curries over Japanese, and Korean
+                                barbecue over yakiniku (except wagyu). When I
+                                workshopped this theory I heard a feeble defense
+                                raising okonomiyaki. I did have to think, but
+                                jianbing and bánh xèo still win. Unless you plan
+                                on eating sushi every day (I would), choose
+                                Taiwan.
+                            </p>
+                        </blockquote>
+                        <p>
+                            This struck a chord because I've always felt that
+                            Japanese food enjoys absurd levels of popularity
+                            relative to other Asian cuisines. While he left out
+                            some dishes such as udon (chewy noodles) and katsu
+                            (breaded meat cutlets), I still agree with most of
+                            his critique. However, the discussions I had with a
+                            few friends revealed something I had overlooked:
+                            simplicity can provide its own advantages.
+                        </p>
+                        <h3 id="the-greatness-hidden-in-simplicity">
+                            The Greatness Hidden in Simplicity
+                        </h3>
+                        <p>
+                            Japanese cuisine emphasizes maximizing the quality
+                            and flavor from a select few ingredients at the
+                            expense of variety. This could be explained
+                            geographically: Japan is a mountainous archipelago
+                            far removed from the equator where most of the land
+                            is not suitable for agriculture which means there
+                            really isn’t a lot of room for growing a diverse
+                            array of vegetables or raising livestock. This can
+                            lead to feelings monotony, and even one of my
+                            friends who loves Japanese food had to take breaks
+                            from it during his stay. This is one of the main
+                            reasons why I was never excited about Japanese food,
+                            but I also under-appreciated the benefits of this
+                            restriction.
+                        </p>
+
+                        <p>
+                            Japanese cuisine's characteristic focus on
+                            ingredient quality means that even basic dishes are
+                            delicious. Nowhere is this more evident than in
+                            Japan's convenience stores, which have earned
+                            international acclaim. Instead of dedicating
+                            extensive time to seeking out high-end restaurants,
+                            travelers can confidently grab meals to-go before
+                            heading off to explore. Local citizens can also
+                            appreciate this convenience because Japanese work
+                            culture is known to be demanding, leaving people
+                            with little energy to cook something when they get
+                            back home.
+                        </p>
+                        <figure style="text-align: center; margin: 20px 0">
+                            <img
+                                src="images/ingredient-selection/raw_fish Medium.jpeg"
+                                style="max-width: 100%"
+                            />
+                            <figcaption
+                                style="
+                                    font-style: italic;
+                                    color: var(--coffee);
+                                    margin-top: 10px;
+                                "
+                            >
+                                Yep sashimi is just raw fish, and it's
+                                surprisingly good???
+                            </figcaption>
+                        </figure>
+                        <p>
+                            This high baseline quality runs deeper than
+                            convenience. By focusing on a few key ingredients,
+                            Japanese chefs can achieve extraordinary mastery.
+                            Critics and casual diners alike can appreciate the
+                            requisite skill to create raw seafood dishes such as
+                            sashimi. There's no need to explain about the
+                            technicalities of a bain-marie to impress them.
+                            Watching a chef assemble sushi in front of you adds
+                            a unique visual and experiential appeal.
+                        </p>
+                        <p>
+                            Another advantage of simplicity means its easy to
+                            add things on top to increase the variety. Regional
+                            trade networks have led to Japan's adaptation of
+                            spicy elements from its Asian neighbors. Tantanmen,
+                            which incorporates the same doubanjiang (chili bean
+                            paste) found in Sichuan's mapo tofu, demonstrates
+                            how Japanese cuisine can thoughtfully integrate
+                            external influences while maintaining its
+                            distinctive character. While traditional sushi
+                            celebrates the pure flavor of fish, modern
+                            interpretations incorporate various sauces that add
+                            layers of complexity. Its much harder to do this
+                            with a complex dish where there are already so many
+                            different flavors competing for your attention.
+                        </p>
+                        <figure style="text-align: center; margin: 20px 0">
+                            <img
+                                src="images/ingredient-selection/variety_sushi.jpeg"
+                                style="max-width: 75%"
+                            />
+                            <figcaption
+                                style="
+                                    font-style: italic;
+                                    color: var(--coffee);
+                                    margin-top: 10px;
+                                "
+                            >
+                                I'm sure a purist would say we've lost the plot,
+                                but I think this looks nice.
+                            </figcaption>
+                        </figure>
+                        <p>
+                            As an aside, none of this would be possible unless
+                            the society as a whole strived to make high quality
+                            ingredients accessible to everyone. The same quality
+                            $5 sushi in the convenience store would cost up to
+                            $20 in the US, which helps explain my initial
+                            skepticism about Japanese cuisine's reputation.
+                            Unfortunately, this mark up reflects the broader
+                            issue where a lack in quality is made up for using
+                            additives like high fructose corn syrup. Fresh meat
+                            and produce come at a steep price and it's sometimes
+                            cheaper to eat mass produced processed food instead.
+                            It's really no wonder why
+                            <a
+                                href="https://www.who.int/data/gho/data/indicators/indicator-details/GHO/prevalence-of-obesity-among-adults-bmi--30-(crude-estimate)-(-)"
+                                >the US has more than 10 times the obesity rate
+                                of Japan</a
+                            >. This stark contrast showcases how ingredient
+                            quality can affect entire food cultures.
+                        </p>
+                        <h3 id="when-spectacle-overshadows-substance">
+                            When Spectacle Overshadows Substance
+                        </h3>
+                        <p>
+                            While Japanese cuisine demonstrates how intentional
+                            ingredient selection can elevate even simple dishes,
+                            recent trends in other cuisines show what happens
+                            when this principle is overlooked in favor of
+                            appealing to social media.
+                        </p>
+                        <p>
+                            There has been a recent trend of adding mozzarella
+                            cheese to dishes like tteokbokki (rice cakes),
+                            dakgalbi (spicy chicken), and even traditional
+                            stews. While some combinations like cheese + buldak
+                            (fire chicken) have become popular, others feel much
+                            more forced. Restaurants face intense competition
+                            and understandably, some end up pandering to the
+                            trend in a short sighted attempt to stay relevant.
+                        </p>
+                        <figure style="text-align: center; margin: 20px 0">
+                            <img
+                                src="images/ingredient-selection/cheesy_krfood Medium.jpeg"
+                                style="max-width: 100%"
+                            />
+                            <figcaption
+                                style="
+                                    font-style: italic;
+                                    color: var(--coffee);
+                                    margin-top: 10px;
+                                "
+                            >
+                                You can add a heap of cheese to your short ribs
+                                and see it lit aflame!
+                            </figcaption>
+                        </figure>
+                        <p>
+                            With thousands of cheese varieties available,
+                            mozzarella is rarely the optimal choice. Yet, its
+                            stretchy texture often wins out, catering to visual
+                            appeal over nuanced flavor. One of my friends who
+                            visited Korea recently describes his grievances: a
+                            perfectly seasoned grilled chicken has absolutely no
+                            need for such a bland accompaniment that doesn't
+                            even stick properly to the chicken anyway. Leave the
+                            cheese pulls for dishes like pizza.
+                        </p>
+                        <p>
+                            It's not just basic ingredients that get mis-used,
+                            the thoughtless addition of luxury ingredients like
+                            caviar and truffle is also a common culinary circus
+                            act. You might see
+                            <a
+                                href="https://www.forbes.com/sites/carriecoolidge/2020/05/05/vacation-in-hawaii-like-a-homeowner-with-destination-residences-hawaii/?"
+                                >caviar squeezed into a perfectly good burger</a
+                            >
+                            , not because the addition creates a more harmonious
+                            dish, but because its presence allows the restaurant
+                            to double the menu price and create an
+                            Instagram-worthy spectacle. This treatment reduces
+                            these ingredients from their role as refined flavor
+                            elements to the culinary equivalent of slapping a
+                            designer logo onto a basic t-shirt — what about this
+                            is really
+                            <a
+                                href="https://fearofgod.com/collections/essentials"
+                                >essential</a
+                            >?
+                        </p>
+                        <p>
+                            Then there's wagyu, the mere mention of which brings
+                            people to salivation. When my friend suggested Jeju
+                            Noodle Bar, a Michelin-starred establishment serving
+                            wagyu ramyun, I jumped at the chance. When the dish
+                            finally arrived, I took a second to take it all in.
+                            Here was a piping hot bowl of ramyun with thin
+                            slices of wagyu draped neatly on the top. The broth
+                            was undeniably delicious, but the wagyu...it was
+                            almost lost. The fat, which I expected to melt on my
+                            tongue like butter, simply dissolved into the broth,
+                            leaving behind strips of meat that, while tender,
+                            could have been any decent cut of beef. There was no
+                            distinct wagyu flavor, almost as if the broth had
+                            swallowed it whole. At $45 a bowl, I couldn't help
+                            but feel a twinge of disappointment. In the future I
+                            hope to try a dish that better showcases what makes
+                            wagyu so special.
+                        </p>
+                        <figure style="text-align: center; margin: 20px 0">
+                            <img
+                                src="images/ingredient-selection/wagyu_ramen Medium.jpeg"
+                                style="max-width: 100%"
+                            />
+                            <figcaption
+                                style="
+                                    font-style: italic;
+                                    color: var(--coffee);
+                                    margin-top: 10px;
+                                "
+                            >
+                                The wagyu is added in raw and cooks in the
+                                broth. You can even hear it mooing!
+                            </figcaption>
+                        </figure>
+                        <h3 id="soup-dumplings-a-premium-that-justifies-itself">
+                            Soup Dumplings: a Premium that Justifies Itself
+                        </h3>
+                        <p>
+                            Not all premium-priced dishes reflect thoughtless
+                            luxury additions. Though some would argue that
+                            adding soup to dumplings is just another gimmick to
+                            raise the price of the dish, xiao long bao
+                            incorporates the ingredient much more honestly and
+                            leads to a unique experience that justifies the
+                            price bump.
+                        </p>
+                        <p>
+                            Having attempted the creation of the dish myself,
+                            incorporating the soup into the dumpling is no easy
+                            feat. The flavor of the soup has to be infused into
+                            a gelatinous binding and broken up to evenly mix
+                            with the rest of the filling. Folding the dough
+                            around this filling also takes great care to prevent
+                            it from deforming while steaming. Doing it once will
+                            humble you. Doing it fifty times will leave you with
+                            immense respect to the chefs who churn these out at
+                            restaurant scale.
+                        </p>
+                        <figure style="text-align: center; margin: 20px 0">
+                            <img
+                                src="images/ingredient-selection/soup_dumpling_shumai Medium.jpeg"
+                                style="max-width: 100%"
+                            />
+                            <figcaption
+                                style="
+                                    font-style: italic;
+                                    color: var(--coffee);
+                                    margin-top: 10px;
+                                "
+                            >
+                                It looks more like Shumai than a soup dumpling,
+                                a testament to the skill required to make these.
+                            </figcaption>
+                        </figure>
+                        <p>
+                            Unlike the previous cases, the intention behind
+                            adding soup inside a dumpling makes sense. The soups
+                            liquid richness harmonizes well with the rest of the
+                            filling as the meat becomes juicy and tender. If
+                            anything, soup dumplings are the opposite of
+                            gimmicks; they are a testament to culinary
+                            technique. The careful construction required to
+                            encase a flavorful broth within a delicate wrapper
+                            is far from a simple trick. While other related
+                            dishes such as baozi share some similarities in
+                            their filling-to-wrapper ratio, none quite replicate
+                            the experience of biting into a soup dumpling.
+                        </p>
+                        <h2 id="concluding-thoughts">Concluding Thoughts</h2>
+                        <p>
+                            If you've made it this far, I hope you take some
+                            time to reflect about various dishes you've tried
+                            and how the ingredients played a role in your
+                            enjoyment of it. As a home cook, I often enjoy
+                            combining various ingredients all willy-nilly like
+                            some mad scientist. This experience has shown me the
+                            value of intentional ingredient selection, and I
+                            plan to apply that more going forward.
+                        </p>
+                        <p>
+                            As an aside, I was curious to see how Claude could
+                            help me write this post without completely losing my
+                            influence in it. My workflow was repeatedly writing
+                            and asking for improvements. It definitely sped up
+                            the time to achieve a certain level of quality I was
+                            acceptable with as the biggest issue I had was tying
+                            things together in a way that flowed naturally. I
+                            also think it helps with writers block since it is
+                            able to quickly generate more supporting examples or
+                            further areas of exploration. With time, I'm sure I
+                            could even feed it enough writing samples to where
+                            it is able to write things in my style.
+                        </p>
+                        <p>
+                            Finally, I plan to keep writing on various random
+                            topics so stay tuned for more!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- Research Content -->
+            <div id="research" class="content-section py-5">
+                <div class="container">
+                    <h2 class="display-5 mb-5">Selected Publications</h2>
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="card publication-card shadow-sm">
+                                <div class="card-body">
+                                    <h3 class="h4">Publication Title 1</h3>
+                                    <p class="text-muted">
+                                        Authors, Conference/Journal, Year
+                                    </p>
+                                    <p>
+                                        Brief description of the publication and
+                                        its contributions.
+                                    </p>
+                                    <a
+                                        href="#"
+                                        class="btn btn-outline-primary btn-sm"
+                                        >Read Paper</a
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script src="script.js"></script>
+        </div>
+        <!-- Publications Page Content (publications.html) -->
+    </body>
+</html>

@@ -1,0 +1,2351 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Lofi Procedural Music Generator v2</title>
+        <!-- Bootstrap CSS -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="../styles.css" />
+        <style>
+            /* Same styles as in lofi.html */
+            .card {
+                background-color: var(--milk);
+                border: none;
+                border-radius: 8px;
+                margin-bottom: 1.5rem;
+            }
+
+            .card-header {
+                background-color: var(--mocha);
+                color: var(--beige);
+                border-bottom: none;
+                border-radius: 8px 8px 0 0 !important;
+                padding: 0.75rem 1.25rem;
+            }
+
+            .card-body {
+                background-color: var(--milk);
+                border-radius: 0 0 8px 8px;
+                padding: 1.5rem;
+            }
+
+            .form-range::-webkit-slider-thumb {
+                background: var(--coffee);
+            }
+
+            .form-label {
+                color: var(--coffee);
+                font-weight: 500;
+            }
+
+            .btn-primary {
+                background-color: var(--coffee);
+                border-color: var(--coffee);
+            }
+
+            .btn-primary:hover {
+                background-color: var(--mocha);
+                border-color: var(--mocha);
+            }
+
+            .slider-group {
+                display: flex;
+                gap: 2rem;
+                padding: 1rem;
+            }
+
+            .vertical-slider-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                position: relative;
+                height: 200px;
+                width: 60px;
+            }
+
+            .vertical-slider {
+                writing-mode: bt-lr; /* Old syntax */
+                -webkit-appearance: slider-vertical; /* Webkit */
+                width: 8px;
+                height: 150px;
+                padding: 0 5px;
+                margin: 10px 0;
+            }
+
+            .slider-value {
+                font-size: 0.8rem;
+                color: var(--coffee);
+                margin-bottom: 5px;
+            }
+
+            .slider-label {
+                font-size: 0.8rem;
+                color: var(--coffee);
+                margin-top: 5px;
+            }
+
+            /* Grid marks */
+            .grid-marks {
+                position: absolute;
+                left: 20px;
+                height: 150px;
+                width: 15px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                pointer-events: none;
+            }
+
+            .grid-marks::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 100%;
+                width: 100%;
+                background: repeating-linear-gradient(
+                    to bottom,
+                    #ddd 0px,
+                    #ddd 1px,
+                    transparent 1px,
+                    transparent 15px
+                );
+            }
+
+            /* Improve slider appearance */
+            .vertical-slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: var(--coffee);
+                cursor: pointer;
+                border: none;
+            }
+
+            .vertical-slider::-webkit-slider-runnable-track {
+                width: 8px;
+                height: 150px;
+                background: #e9ecef;
+                border-radius: 4px;
+            }
+
+            /* Firefox specific styles */
+            .vertical-slider::-moz-range-thumb {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: var(--coffee);
+                cursor: pointer;
+                border: none;
+            }
+
+            .vertical-slider::-moz-range-track {
+                width: 8px;
+                height: 150px;
+                background: #e9ecef;
+                border-radius: 4px;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="container py-4">
+            <div class="row justify-content-center">
+                <div class="col">
+                    <h1 class="text-center mb-4">Lofi Music Generator v2</h1>
+
+                    <!-- Transport Controls -->
+                    <div class="card mb-4">
+                        <div class="card-body text-center">
+                            <button id="playPauseBtn" class="btn btn-primary me-2">Play</button>
+                            <button id="skipBtn" class="btn btn-primary">Skip</button>
+                        </div>
+                    </div>
+
+                    <!-- Main Controls -->
+                    <div class="row g-4">
+                        <!-- Column 1: Track Volumes -->
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Track Volumes</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Master Volume</label>
+                                        <input type="range" class="form-range" id="masterVolume" min="0" max="100" value="75">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Melody Volume</label>
+                                        <div class="d-flex align-items-center">
+                                            <input type="range" class="form-range me-2" id="melodyVolume" min="0" max="100" value="75">
+                                            <button id="melodyMute" class="btn btn-sm btn-outline-secondary">Mute</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Harmony Volume</label>
+                                        <div class="d-flex align-items-center">
+                                            <input type="range" class="form-range me-2" id="harmonyVolume" min="0" max="100" value="75">
+                                            <button id="harmonyMute" class="btn btn-sm btn-outline-secondary">Mute</button>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Bass Volume</label>
+                                        <div class="d-flex align-items-center">
+                                            <input type="range" class="form-range me-2" id="bassVolume" min="0" max="100" value="75">
+                                            <button id="bassMute" class="btn btn-sm btn-outline-secondary">Mute</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Drums Volume</label>
+                                        <div class="d-flex align-items-center">
+                                            <input type="range" class="form-range me-2" id="drumsVolume" min="0" max="100" value="75">
+                                            <button id="drumsMute" class="btn btn-sm btn-outline-secondary">Mute</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Column 2: Synth Controls -->
+                        <div class="col-lg-4">
+                            <!-- Synth Controls -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Synth Settings</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="nav nav-tabs" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-bs-toggle="tab" href="#melodySettings">Melody</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#harmonySettings">Harmony</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#bassSettings">Bass</a>
+                                        </li>
+                                    </ul>
+
+                                    <div class="tab-content mt-3">
+                                        <!-- Melody Settings -->
+                                        <div class="tab-pane fade show active" id="melodySettings">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Wave Type</label>
+                                                        <select class="form-select" data-synth="melody" data-param="waveType">
+                                                            <option value="sine">Sine</option>
+                                                            <option value="triangle" selected>Triangle</option>
+                                                            <option value="square">Square</option>
+                                                            <option value="sawtooth">Sawtooth</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Detune</label>
+                                                        <input type="range" class="form-range" data-synth="melody" data-param="detune"
+                                                               min="-1200" max="1200" value="0">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Filter Cutoff</label>
+                                                        <input type="range" class="form-range" data-synth="melody" data-param="filter.frequency"
+                                                               min="20" max="20000" value="2000">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Filter Resonance</label>
+                                                        <input type="range" class="form-range" data-synth="melody" data-param="filter.resonance"
+                                                               min="0" max="20" value="1">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- ADSR Controls -->
+                                            <div class="row">
+                                                <div class="slider-group">
+                                                    <div class="vertical-slider-container">
+                                                        <span class="slider-value">0.5</span>
+                                                        <input type="range"
+                                                               class="vertical-slider"
+                                                               data-synth="melody"
+                                                               data-param="envelope.attack"
+                                                               min="0"
+                                                               max="1"
+                                                               step="0.01"
+                                                               value="0.5">
+                                                        <label class="slider-label">Attack</label>
+                                                        <div class="grid-marks"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Decay</label>
+                                                    <input type="range" class="form-range" data-synth="melody" data-param="envelope.attack"
+                                                           min="0" max="2" step="0.01" value="0.005">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Sustain</label>
+                                                    <input type="range" class="form-range" data-synth="melody" data-param="envelope.attack"
+                                                           min="0" max="2" step="0.01" value="0.005">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Release</label>
+                                                    <input type="range" class="form-range" data-synth="melody" data-param="envelope.attack"
+                                                           min="0" max="2" step="0.01" value="0.005">
+                                                </div>
+                                                <!-- Similar controls for Decay, Sustain, Release -->
+                                            </div>
+                                        </div>
+
+                                        <!-- Similar panels for Harmony and Bass -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Column 3: Audio Settings -->
+                        <div class="col-lg-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Song Settings</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Tempo</label>
+                                        <input type="range" class="form-range" id="tempo" min="40" max="200" value="50">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Key</label>
+                                        <select class="form-select" id="key">
+                                            <option value="0">C</option>
+                                            <option value="1">C#</option>
+                                            <option value="2">D</option>
+                                            <option value="3">D#</option>
+                                            <option value="4">E</option>
+                                            <option value="5">F</option>
+                                            <option value="6">F#</option>
+                                            <option value="7">G</option>
+                                            <option value="8">G#</option>
+                                            <option value="9">A</option>
+                                            <option value="10">A#</option>
+                                            <option value="11">B</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+        class SectionSong{}
+        class Song {
+            constructor(id, key, tempo, tracks) {
+                this.id = id;
+                this.key = key;
+                this.tempo = tempo;
+                this.tracks = tracks;
+                this.progression = [];
+                this.length = 200 + Math.floor(Math.random() * 100); // 200 measures
+                this.currentMeasure = 0;
+                this.bufferSize = 4; // How many measures to keep buffered
+                this.isEnded = false;
+            }
+
+            updatePatterns(patternCoordinator) {
+                // Generate patterns if buffer is getting low
+                while (this.needsNewPatterns() && this.currentMeasure < this.length) {
+                    const measureIndex = this.currentMeasure + this.getBufferCount();
+                    const progressionIndex = measureIndex % this.progression.length;
+                    const chord = this.progression[progressionIndex];
+
+                    // Get last patterns for each track for continuity
+                    const previousPatterns = {
+                        melody: this.tracks.melody.lastPattern,
+                        harmony: this.tracks.harmony.lastPattern,
+                        bass: this.tracks.bass.lastPattern,
+                        drums: this.tracks.drums.lastPattern
+                    };
+
+                    // Generate new patterns
+                    const newPatterns = patternCoordinator.generateFullPattern(
+                        this.key,
+                        chord,
+                        2, // Generate 2 measures at a time
+                        previousPatterns
+                    );
+
+                    // Update each track's pattern buffer
+                    Object.entries(newPatterns).forEach(([trackName, pattern]) => {
+                        this.tracks[trackName].updatePattern(measureIndex, pattern);
+                    });
+                }
+            }
+
+            needsNewPatterns() {
+                // Check if any track needs new patterns
+                return Object.values(this.tracks).some(track =>
+                    track.patternBuffer.size < this.bufferSize
+                );
+            }
+
+            getBufferCount() {
+                // Get the current size of the pattern buffer
+                // Uses the first track as reference since all tracks should be in sync
+                return this.tracks.melody.patternBuffer.size;
+            }
+
+            getCurrentPatterns() {
+                // Get current patterns for all tracks
+                const patterns = {};
+                Object.entries(this.tracks).forEach(([trackName, track]) => {
+                    patterns[trackName] = track.getCurrentPattern(this.currentMeasure);
+                });
+                return patterns;
+            }
+
+            advanceMeasure() {
+                // Clean up old patterns from all tracks
+                // Object.values(this.tracks).forEach(track => {
+                //     track.clearOldPatterns(this.currentMeasure, this.bufferSize);
+                // });
+
+                this.currentMeasure++;
+
+                if (this.currentMeasure >= this.length) {
+                    this.isEnded = true;
+                }
+
+                return !this.isEnded;
+            }
+
+            reset() {
+                this.currentMeasure = 0;
+                this.isEnded = false;
+                // Clear all track pattern buffers
+                Object.values(this.tracks).forEach(track => {
+                    track.patternBuffer.clear();
+                    track.lastPattern = null;
+                });
+            }
+        }
+
+        class Track {
+            constructor(type, volume = 0.8) {
+                this.type = type;
+                this.synthType = this.getSynthType(type);
+                this.synth == null; // Synth instance will be set by audio engine
+                this.volume = volume;
+                this.muted = false;
+                this.patternBuffer = new Map(); // Buffer for this track's patterns
+                this.currentPattern = null;
+                this.lastPattern = null; // For continuity between pattern generations
+            }
+
+            getSynthType(type) {
+                switch(type) {
+                    case 'lofi-piano':
+                        return SynthTypes.LOFI_PIANO;
+                    case 'pad':
+                        return SynthTypes.PAD;
+                    case 'bass':
+                        return SynthTypes.BASS;
+                    case 'drums':
+                        return SynthTypes.DRUMS;
+                    default:
+                        throw new Error(`Unknown track type: ${type}`);
+                }
+            }
+            // Update patterns for this specific track
+            updatePattern(measureIndex, newPattern) {
+                this.patternBuffer.set(measureIndex, newPattern);
+                this.lastPattern = newPattern;
+            }
+
+            // Get pattern for current measure
+            getCurrentPattern(measureIndex) {
+                return this.patternBuffer.get(measureIndex);
+            }
+
+            // Clean up old patterns
+            clearOldPatterns(measureIndex, bufferSize) {
+                // Remove patterns that are too old
+                for (let i = measureIndex - bufferSize; i < measureIndex; i--) {
+                    this.patternBuffer.delete(i);
+                }
+            }
+        }
+
+        class SongManager {
+            constructor(audioEngine) {
+                this.audioEngine = audioEngine;
+                this.currentSong = null;
+                this.patternCoordinator = new PatternCoordinator();
+                this.isPlaying = false;
+
+                // Scheduling properties
+                this.nextNoteTime = 0;
+                this.lookAhead = 0.1;
+                this.scheduleAheadTime = 0.2;
+            }
+            setUIController(uiController) {
+                this.uiController = uiController;
+            }
+
+            createNewSong() {
+                const id = Date.now().toString();
+                // Use UI settings for tempo and key if available
+                const tempo = this.uiController ? this.uiController.settings.tempo :
+                              Math.floor(Math.random() * (80 - 40) + 40);
+                const key = this.uiController ? this.uiController.settings.key :
+                            Math.floor(Math.random() * MusicTheory.NOTES.length);
+
+                const tracks = {
+                    melody: new Track('lofi-piano'),
+                    harmony: new Track('pad'),
+                    bass: new Track('bass'),
+                    drums: new Track('drums')
+                };
+
+                // Initialize synths for each track
+                Object.entries(tracks).forEach(([_, track]) => {
+                    track.synth = this.audioEngine.createSynth(track.synthType);
+                });
+
+                const song = new Song(id, key, tempo, tracks);
+
+                // Select random progression
+                const progressions = Object.values(MusicTheory.CHORD_PROGRESSIONS);
+                const rawProgression = progressions[Math.floor(Math.random() * progressions.length)];
+                song.progression = MusicTheory.progressionToChords(rawProgression, key);
+
+                this.currentSong = song;
+
+                // Apply UI settings to new song if available
+                if (this.uiController) {
+                    this.uiController.applySettings(song);
+                }
+            }
+
+            playSong() {
+                if (!this.currentSong) {
+                    this.createNewSong();
+                }
+                console.log('Playing song:', this.currentSong.id);
+
+                this.isPlaying = true;
+                this.nextNoteTime = this.audioEngine.getCurrentTime();
+
+                // Start the scheduling loop
+                this.scheduleNextNotes();
+            }
+
+            scheduleNextNotes() {
+                const currentTime = this.audioEngine.getCurrentTime();
+
+                // Schedule notes for current time slot
+                while (this.nextNoteTime < currentTime + this.scheduleAheadTime) {
+
+                    // Check if we need new patterns
+                    console.log("Generating new patterns")
+                    this.currentSong.updatePatterns(this.patternCoordinator);
+
+                    // Schedule current notes
+                    this.scheduleNotes(this.nextNoteTime);
+
+                    // Advance to next time slot
+                    this.advanceTime();
+                }
+
+                // Continue the loop if still playing
+                if (this.isPlaying) {
+                    requestAnimationFrame(() => this.scheduleNextNotes());
+                }
+            }
+
+            scheduleNotes(time) {
+                // Get current patterns for all tracks
+                const currentPatterns = this.currentSong.getCurrentPatterns();
+                const sixteenthNoteDuration = this.getNoteDuration();
+
+                // Schedule each track's notes
+                Object.entries(this.currentSong.tracks).forEach(([trackName, track]) => {
+                    if (!track.muted && currentPatterns[trackName]) {
+                        const pattern = currentPatterns[trackName];
+
+                        // Loop through each 16th note position in the pattern
+                        for (let i = 0; i < pattern.length; i++) {
+                            const note = pattern[i];
+                            if (note) { // Only schedule if there's a note at this position
+                                const noteTime = time + (i * sixteenthNoteDuration);
+                                this.audioEngine.playNote(
+                                    track.synth,
+                                    note,
+                                    noteTime,
+                                    note.duration || sixteenthNoteDuration
+                                );
+                            }
+                        }
+                    }
+                });
+            }
+
+            advanceTime() {
+                // Calculate time for next note based on tempo
+                const secondsPerBeat = 60.0 / this.currentSong.tempo;
+                this.nextNoteTime += secondsPerBeat / 4; // For 16th notes
+
+                // Advance song position
+                const songContinues = this.currentSong.advanceMeasure();
+
+                if (!songContinues) {
+                    this.handleSongEnd();
+                }
+            }
+
+            handleSongEnd() {
+                this.stop();
+                this.createNewSong();
+                this.playSong();
+            }
+
+            stop() {
+                this.isPlaying = false;
+                if (this.currentSong) {
+                    Object.values(this.currentSong.tracks).forEach(track => {
+                        this.audioEngine.stopTrack(track.synth);
+                    });
+                }
+                this.currentSong?.reset();
+            }
+
+            pause() {
+                this.isPlaying = false;
+            }
+
+            getNoteDuration() {
+                return (60.0 / this.currentSong.tempo) / 4.0; // Duration of a 16th note
+            }
+        }
+
+        class SectionUI{}
+        class UIController {
+            constructor(songManager, audioEngine) {
+                this.songManager = songManager;
+                this.audioEngine = audioEngine;
+                this.settings = {
+                    volumes: {
+                        master: 0.2,
+                        melody: 0.5,
+                        harmony: 0.2,
+                        bass: 0.2,
+                        drums: 0.1
+                    },
+                    isMuted: {
+                        melody: false,
+                        harmony: false,
+                        bass: false,
+                        drums: false
+                    },
+                    key: 0,
+                    tempo: 80,
+                    filterCutoff: 2000,
+                    staticNoise: 20
+                };
+
+                this.state = {
+                    isPlaying: false,
+                    ...this.settings // Include settings in state
+                };
+
+                this.bindEvents();
+                this.updateUI();
+            }
+
+            // Add method to apply current settings to a song
+            applySettings(song) {
+                if (!song) return;
+
+                // Apply volume and mute settings to each track
+                Object.entries(song.tracks).forEach(([trackName, track]) => {
+                    if (track.synth) {
+                        track.synth.setVolume(this.settings.volumes[trackName]);
+                        if (this.settings.isMuted[trackName]) {
+                            track.synth.mute();
+                        } else {
+                            track.synth.unmute();
+                        }
+                    }
+                });
+
+                // Apply master volume
+                this.audioEngine.setMasterVolume(this.settings.volumes.master);
+
+                // Apply tempo and key
+                song.tempo = this.settings.tempo;
+                song.key = this.settings.key;
+            }
+            debounce(func, wait) {
+                let timeout;
+                return (...args) => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), wait);
+                };
+            }
+            setupSynthControls() {
+                document.querySelectorAll('[data-synth][data-param]').forEach(control => {
+                    control.addEventListener('input', (e) => {
+                        const synthType = e.target.dataset.synth;
+                        const param = e.target.dataset.param;
+                        const value = e.target.type === 'range' ? parseFloat(e.target.value) : e.target.value;
+
+                        this.updateSynthParameter(synthType, param, value);
+                    });
+                });
+            }
+
+            updateSynthParameter(synthType, param, value) {
+                console.log("updating with ", synthType, param, value);
+                const generator = this.getGenerator(synthType);
+                if (!generator) return;
+
+                // Handle nested parameters (e.g., "envelope.attack")
+                const parts = param.split('.');
+                let settings = generator.settings;
+
+                if (parts.length > 1) {
+                    const obj = settings[parts[0]];
+                    obj[parts[1]] = value;
+                } else {
+                    settings[param] = value;
+                }
+
+                // Update the synth if it exists
+                const synth = this.getSynth(synthType);
+                if (synth) {
+                    synth.updateSettings(settings);
+                }
+            }
+
+            getGenerator(type) {
+                switch(type) {
+                    case 'melody': return this.songManager.patternCoordinator.melodyGenerator;
+                    case 'harmony': return this.songManager.patternCoordinator.harmonyGenerator;
+                    case 'bass': return this.songManager.patternCoordinator.bassGenerator;
+                    default: return null;
+                }
+            }
+
+            getSynth(type) {
+                if (!this.songManager.currentSong) return null;
+                switch(type) {
+                    case 'melody': return this.songManager.currentSong.tracks.melody.synth;
+                    case 'harmony': return this.songManager.currentSong.tracks.harmony.synth;
+                    case 'bass': return this.songManager.currentSong.tracks.bass.synth;
+                    default: return null;
+                }
+            }
+            bindEvents() {
+                // Play/Pause button with state management
+                const playPauseBtn = document.getElementById('playPauseBtn');
+                playPauseBtn.addEventListener('click', () => {
+                    this.state.isPlaying = !this.state.isPlaying;
+
+                    if (this.state.isPlaying) {
+                        this.audioEngine.resume(); // Ensure audio context is resumed
+                        this.songManager.playSong();
+                    } else {
+                        this.songManager.pause();
+                    }
+
+                    this.updatePlayPauseButton();
+                });
+
+                // Skip button
+                const skipBtn = document.getElementById('skipBtn');
+                skipBtn.addEventListener('click', () => {
+                    this.songManager.stop();
+                    this.songManager.createNewSong();
+                    if (this.state.isPlaying) {
+                        this.songManager.playSong();
+                    }
+                });
+
+                // Master volume with debouncing
+                const masterVolumeSlider = document.getElementById('masterVolume');
+                    masterVolumeSlider.addEventListener('input', this.debounce((e) => {
+                        const volume = e.target.value / 100;
+                        this.settings.volumes.master = volume;
+                        this.audioEngine.setMasterVolume(volume);
+                    }, 50));
+
+                // Track volume controls with debouncing
+                ['melody', 'harmony', 'bass', 'drums'].forEach(trackId => {
+                    const slider = document.getElementById(`${trackId}Volume`);
+                    const muteBtn = document.getElementById(`${trackId}Mute`);
+
+                    if (slider) {
+                        slider.addEventListener('input', this.debounce((e) => {
+                            const volume = e.target.value / 100;
+                            this.settings.volumes[trackId] = volume;
+                            const track = this.songManager.currentSong?.tracks[trackId];
+                            if (track) {
+                                this.audioEngine.setTrackVolume(track.synth, volume);
+                            }
+                        }, 50));
+
+                        slider.value = this.settings.volumes[trackId] * 100;
+                    }
+
+                    if (muteBtn) {
+                        muteBtn.addEventListener('click', () => {
+                            this.toggleMute(trackId);
+                        });
+                    }
+                });
+
+                // Key selection with settings update
+                const keySelector = document.getElementById('key');
+                if (keySelector) {
+                    keySelector.addEventListener('change', (e) => {
+                        this.settings.key = parseInt(e.target.value);
+                        if (this.songManager.currentSong) {
+                            this.songManager.currentSong.key = this.settings.key;
+                            if (this.state.isPlaying) {
+                                this.songManager.stop();
+                                this.songManager.playSong();
+                            }
+                        }
+                    });
+                    keySelector.value = this.settings.key;
+                }
+
+                // Tempo control with settings update
+                const tempoSlider = document.getElementById('tempo');
+                if (tempoSlider) {
+                    tempoSlider.addEventListener('input', this.debounce((e) => {
+                        const tempo = parseInt(e.target.value);
+                        if (tempo >= 0 && tempo <= 200) {
+                            this.settings.tempo = tempo;
+                            if (this.songManager.currentSong) {
+                                this.songManager.currentSong.tempo = tempo;
+                            }
+                        }
+                    }, 100));
+                    tempoSlider.value = this.settings.tempo;
+                }
+                this.setupSynthControls()
+            }
+
+            toggleMute(trackId) {
+                const muteBtn = document.getElementById(`${trackId}Mute`);
+                const volumeSlider = document.getElementById(`${trackId}Volume`);
+                const track = this.songManager.currentSong?.tracks[trackId];
+
+                if (!track) return;
+
+                this.settings.isMuted[trackId] = !this.settings.isMuted[trackId];
+
+                if (this.settings.isMuted[trackId]) {
+                    this.audioEngine.muteTrack(track.synth);
+                    muteBtn.classList.add('active');
+                    muteBtn.textContent = 'Unmute';
+                    volumeSlider.disabled = true;
+                } else {
+                    this.audioEngine.unmuteTrack(track.synth);
+                    muteBtn.classList.remove('active');
+                    muteBtn.textContent = 'Mute';
+                    volumeSlider.disabled = false;
+                }
+            }
+
+            updatePlayPauseButton() {
+                const btn = document.getElementById('playPauseBtn');
+                btn.textContent = this.state.isPlaying ? 'Pause' : 'Play';
+                btn.classList.toggle('active', this.state.isPlaying);
+            }
+
+            updateUI() {
+                // Update all UI elements to match current state
+                Object.entries(this.state.volumes).forEach(([trackId, volume]) => {
+                    const slider = document.getElementById(`${trackId}Volume`);
+                    if (slider) {
+                        slider.value = volume * 100;
+                    }
+                });
+
+                Object.entries(this.state.isMuted).forEach(([trackId, isMuted]) => {
+                    const muteBtn = document.getElementById(`${trackId}Mute`);
+                    const volumeSlider = document.getElementById(`${trackId}Volume`);
+
+                    if (muteBtn && volumeSlider) {
+                        muteBtn.classList.toggle('active', isMuted);
+                        muteBtn.textContent = isMuted ? 'Unmute' : 'Mute';
+                        volumeSlider.disabled = isMuted;
+                    }
+                });
+
+                this.updatePlayPauseButton();
+            }
+
+            // Add some CSS styles for better visual feedback
+            addStyles() {
+                const style = document.createElement('style');
+                style.textContent = `
+                    .btn.active {
+                        background-color: var(--mocha);
+                        border-color: var(--mocha);
+                    }
+
+                    input[type="range"]:disabled {
+                        opacity: 0.5;
+                    }
+
+                    .volume-control {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                    }
+
+                    .mute-btn {
+                        min-width: 80px;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        class AudioEngine {
+            constructor() {
+                this.context = null;
+                this.masterGain = null;
+                this.init();
+            }
+
+            init() {
+                try {
+                    this.context = new (window.AudioContext || window.webkitAudioContext)();
+                    this.masterGain = this.context.createGain();
+                    this.masterGain.connect(this.context.destination);
+                } catch (error) {
+                    console.error('Failed to initialize AudioContext:', error);
+                    throw new Error('WebAudio not supported in this browser');
+                }
+            }
+
+            getCurrentTime() {
+                return this.context.currentTime;
+            }
+
+            createSynth(synthType) {
+                return SynthFactory.createSynth(synthType, this.context, this.masterGain);
+            }
+
+            playNote(synth, note, time, duration) {
+                synth.playNote(note, time, duration);
+            }
+
+            stopTrack(synth) {
+                synth.stopAll();
+            }
+
+            setTrackVolume(synth, volume) {
+                synth.setVolume(volume);
+            }
+
+            muteTrack(synth) {
+                synth.mute();
+            }
+
+            unmuteTrack(synth) {
+                synth.unmute();
+            }
+
+            setMasterVolume(volume) {
+                if (this.masterGain) {
+                    this.masterGain.gain.setValueAtTime(volume, this.context.currentTime);
+                }
+            }
+
+            resume() {
+                if (this.context.state === 'suspended') {
+                    this.context.resume();
+                }
+            }
+        }
+
+        class MusicTheory {
+            static NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+            static SCALES = {
+                major: [0, 2, 4, 5, 7, 9, 11],
+                minor: [0, 2, 3, 5, 7, 8, 10],
+                pentatonicMajor: [0, 2, 4, 7, 9],
+                pentatonicMinor: [0, 3, 5, 7, 10],
+                blues: [0, 3, 5, 6, 7, 10]
+            };
+
+            static CHORD_TYPES = {
+                major: [0, 4, 7],
+                minor: [0, 3, 7],
+                diminished: [0, 3, 6],
+                augmented: [0, 4, 8],
+                major7: [0, 4, 7, 11],
+                minor7: [0, 3, 7, 10],
+                dominant7: [0, 4, 7, 10]
+            };
+
+            static CHORD_PROGRESSIONS = {
+                lofi1: ['ii', 'V', 'I', 'vi'],
+                lofi2: ['vi', 'IV', 'I', 'V'],
+                lofi3: ['I', 'vi', 'IV', 'V']
+            };
+
+            // For analyzing melodic motion
+            static INTERVALS = {
+                UNISON: 0,
+                MINOR_SECOND: 1,
+                MAJOR_SECOND: 2,
+                MINOR_THIRD: 3,
+                MAJOR_THIRD: 4,
+                PERFECT_FOURTH: 5,
+                TRITONE: 6,
+                PERFECT_FIFTH: 7,
+                MINOR_SIXTH: 8,
+                MAJOR_SIXTH: 9,
+                MINOR_SEVENTH: 10,
+                MAJOR_SEVENTH: 11,
+                OCTAVE: 12
+            };
+
+            // Tension levels for different intervals
+            static INTERVAL_TENSION = {
+                0: 0,    // Unison - no tension
+                1: 0.9,  // Minor Second - high tension
+                2: 0.3,  // Major Second - some tension
+                3: 0.2,  // Minor Third - consonant
+                4: 0.1,  // Major Third - very consonant
+                5: 0.4,  // Perfect Fourth - mild tension
+                6: 1.0,  // Tritone - maximum tension
+                7: 0.1,  // Perfect Fifth - very consonant
+                8: 0.5,  // Minor Sixth - mild tension
+                9: 0.3,  // Major Sixth - some tension
+                10: 0.8, // Minor Seventh - high tension
+                11: 0.7, // Major Seventh - high tension
+                12: 0.1  // Octave - very consonant
+            };
+            static resolveChordSymbol(symbol, key) {
+                // Roman numeral to scale degree mapping
+                const romanNumerals = {
+                    'i': 0, 'ii': 1, 'iii': 2, 'iv': 3, 'v': 4, 'vi': 5, 'vii': 6,
+                    'I': 0, 'II': 1, 'III': 2, 'IV': 3, 'V': 4, 'VI': 5, 'VII': 6
+                };
+
+                // Determine if chord is major or minor based on case
+                const isMinor = symbol === symbol.toLowerCase();
+                const scaleDegree = romanNumerals[symbol];
+
+                // Get the scale notes for the current key
+                const scaleNotes = this.getScaleNotes(key, 'major');
+
+                // Get the root note for this chord
+                const root = scaleNotes[scaleDegree];
+
+                // Determine chord type based on numeral case and position in scale
+                let type = 'major';
+                if (isMinor) {
+                    type = 'minor';
+                }
+                // Special case for diminished vii chord
+                if (symbol.toLowerCase() === 'vii') {
+                    type = 'diminished';
+                }
+
+                return {
+                    root: root,
+                    type: type
+                };
+            }
+
+            static progressionToChords(progression, key) {
+                return progression.map(symbol => this.resolveChordSymbol(symbol, key));
+            }
+
+            // Analysis methods
+            static analyzeMelody(pattern) {
+                const analysis = {
+                    highestNote: null,
+                    lowestNote: null,
+                    averagePitch: 0,
+                    rhythmicDensity: 0,
+                    intervals: [],
+                    tensions: [],
+                    strongBeats: [],
+                    contour: [] // rising, falling, or stable
+                };
+
+                let noteCount = 0;
+                let lastNote = null;
+
+                pattern.forEach((note, index) => {
+                    if (note) {
+                        // Track pitch range
+                        const midiNote = this.noteToMidi(note.note, note.octave);
+                        if (!analysis.highestNote || midiNote > analysis.highestNote) {
+                            analysis.highestNote = midiNote;
+                        }
+                        if (!analysis.lowestNote || midiNote < analysis.lowestNote) {
+                            analysis.lowestNote = midiNote;
+                        }
+
+                        // Calculate intervals and tension
+                        if (lastNote) {
+                            const interval = Math.abs(
+                                this.noteToMidi(note.note, note.octave) -
+                                this.noteToMidi(lastNote.note, lastNote.octave)
+                            );
+                            analysis.intervals.push(interval);
+                            analysis.tensions.push(this.INTERVAL_TENSION[interval % 12]);
+                        }
+
+                        // Track strong beats
+                        if (index % 4 === 0) {
+                            analysis.strongBeats.push(note);
+                        }
+
+                        lastNote = note;
+                        noteCount++;
+                    }
+                });
+
+                analysis.rhythmicDensity = noteCount / pattern.length;
+                return analysis;
+            }
+
+            static findComplementaryNotes(melodyNote, chord, tension = 'low') {
+                const chordNotes = this.getChordNotes(chord.root, chord.type);
+                const complementary = [];
+                const tensionLevels = {
+                    low: 0.3,
+                    medium: 0.5,
+                    high: 0.8
+                };
+
+                chordNotes.forEach(note => {
+                    const interval = Math.abs(
+                        this.NOTES.indexOf(melodyNote) -
+                        this.NOTES.indexOf(note)
+                    ) % 12;
+
+                    if (this.INTERVAL_TENSION[interval] <= tensionLevels[tension]) {
+                        complementary.push(note);
+                    }
+                });
+
+                return complementary;
+            }
+
+            static createBassLine(chord, rhythmicDensity) {
+                const chordNotes = this.getChordNotes(chord.root, chord.type);
+                let bassPattern = [];
+
+                // Simple walking bass for high density
+                if (rhythmicDensity > 0.7) {
+                    bassPattern = [
+                        chordNotes[0], // root
+                        chordNotes[2], // fifth
+                        chordNotes[1], // third
+                        this.walkingBassNote(chord) // approach note
+                    ];
+                }
+                // Root-fifth pattern for medium density
+                else if (rhythmicDensity > 0.4) {
+                    bassPattern = [
+                        chordNotes[0], // root
+                        null,
+                        chordNotes[2], // fifth
+                        null
+                    ];
+                }
+                // Just root notes for low density
+                else {
+                    bassPattern = [chordNotes[0], null, null, null];
+                }
+
+                return bassPattern;
+            }
+
+            static suggestDrumPattern(melodyAnalysis) {
+                const kickPattern = [];
+                const snarePattern = [];
+                const hihatPattern = [];
+
+                // Base kick pattern on strong beats
+                melodyAnalysis.strongBeats.forEach((beat, index) => {
+                    // If melody has note on strong beat, reduce kick probability
+                    kickPattern[index * 4] = beat ? 0.5 : 1;
+                });
+
+                // Base snare density on melodic density
+                const snareDensity = 1 - melodyAnalysis.rhythmicDensity;
+
+                // Base hi-hat pattern on average tension
+                const avgTension = melodyAnalysis.tensions.reduce((a, b) => a + b, 0)
+                    / melodyAnalysis.tensions.length;
+
+                return { kickPattern, snarePattern, hihatPattern };
+            }
+
+            // Utility methods
+            static noteToMidi(note, octave) {
+                return this.NOTES.indexOf(note) + (octave + 1) * 12;
+            }
+
+            static midiToNote(midi) {
+                const octave = Math.floor(midi / 12) - 1;
+                const note = this.NOTES[midi % 12];
+                return { note, octave };
+            }
+
+            static walkingBassNote(chord) {
+                // Calculate approach note to next chord
+                // Implementation depends on chord progression context
+            }
+            static noteToFrequency(note, octave) {
+                const A4 = 440;
+                const A4_INDEX = 69; // MIDI note number for A4
+                const noteIndex = this.NOTES.indexOf(note);
+                const midiNumber = noteIndex + (octave + 1) * 12;
+                return A4 * Math.pow(2, (midiNumber - A4_INDEX) / 12);
+            }
+
+            static getScaleNotes(root, scale) {
+                const scalePattern = this.SCALES[scale];
+                const rootIndex = this.NOTES.indexOf(root);
+                return scalePattern.map(interval =>
+                    this.NOTES[(rootIndex + interval) % 12]
+                );
+            }
+
+            static getChordNotes(root, chordType) {
+                const rootIndex = this.NOTES.indexOf(root);
+                let intervals;
+
+                switch(chordType) {
+                    case 'major':
+                        intervals = [0, 4, 7];
+                        break;
+                    case 'minor':
+                        intervals = [0, 3, 7];
+                        break;
+                    case 'diminished':
+                        intervals = [0, 3, 6];
+                        break;
+                    default:
+                        intervals = [0, 4, 7];
+                }
+
+                return intervals.map(interval =>
+                    this.NOTES[(rootIndex + interval) % 12]
+                );
+            }
+        }
+        class SectionRhythm{
+
+        }
+        class BasePatternGenerator {
+          constructor() {
+            this.tensionLevel = 0.3; // Default tension level
+            this.rhythmicComplexity = 0.5; // Default rhythmic complexity
+          }
+
+          // Utility method for consistent pseudo-random values
+          getPseudoRandomValue(seed) {
+            const x = Math.sin(seed) * 10000;
+            return x - Math.floor(x);
+          }
+
+          // Calculate velocity based on beat position and tension
+          calculateVelocity(beat, tension = this.tensionLevel) {
+            let velocity = 1.0;
+
+            // Stronger velocity on main beats
+            if (beat % 4 === 0) {
+              velocity *= 1.2;
+            }
+
+            // Reduce velocity on weak beats
+            if (beat % 2 !== 0) {
+              velocity *= 0.8;
+            }
+
+            // Add variation based on tension
+            velocity *= 0.8 + (tension * 0.4);
+
+            // Ensure velocity stays within valid range
+            return Math.min(1.0, Math.max(0.1, velocity));
+          }
+
+          // Helper method to calculate tension between two notes
+          calculateInterval(note1, note2) {
+            const midi1 = MusicTheory.noteToMidi(note1.note, note1.octave);
+            const midi2 = MusicTheory.noteToMidi(note2.note, note2.octave);
+            return Math.abs(midi1 - midi2) % 12;
+          }
+
+          // Helper method to get tension level for an interval
+          getIntervalTension(interval) {
+            return MusicTheory.INTERVAL_TENSION[interval];
+          }
+
+          // Helper method to check if a note is in a scale
+          isNoteInScale(note, key, scale) {
+            const scaleNotes = MusicTheory.getScaleNotes(key, scale);
+            return scaleNotes.includes(note);
+          }
+
+          // Helper method to get next scale degree
+          getNextScaleNote(currentNote, key, scale, direction = 1) {
+            const scaleNotes = MusicTheory.getScaleNotes(key, scale);
+            const currentIndex = scaleNotes.indexOf(currentNote);
+            const nextIndex = (currentIndex + direction + scaleNotes.length) % scaleNotes.length;
+            return scaleNotes[nextIndex];
+          }
+
+          // Helper method to check if a note is in a chord
+          isNoteInChord(note, chord) {
+            const chordNotes = MusicTheory.getChordNotes(chord.root, chord.type);
+            return chordNotes.includes(note);
+          }
+
+          // Helper method to add rhythmic variation
+          addRhythmicVariation(basePattern, complexity = this.rhythmicComplexity) {
+            return basePattern.map((value, index) => {
+              if (value) {
+                const variation = this.getPseudoRandomValue(index) * complexity;
+                return Math.max(0.1, value * (1 - variation));
+              }
+              return value;
+            });
+          }
+
+          // Base generate pattern method to be overridden by child classes
+          generatePattern(key, chord, measures = 2, previousPattern = null) {
+            throw new Error('generatePattern must be implemented by child class');
+          }
+        }
+
+        class BassGenerator extends BasePatternGenerator {
+            constructor() {
+                super();
+                this.rhythmicComplexity = 0.2; // Keep it simpler than other parts
+
+                // Basic bass patterns
+                this.bassPatterns = {
+                    simple: [ // Basic root notes on strong beats
+                        1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0
+                    ],
+                    rootFifth: [ // Root and fifth movement
+                        1, 0, 0, 0, 0, 0, 0.7, 0, 1, 0, 0, 0, 0, 0, 0.7, 0
+                    ],
+                    walking: [ // Walking bass pattern
+                        1, 0, 0.7, 0, 0.8, 0, 0.7, 0, 1, 0, 0.7, 0, 0.8, 0, 0.7, 0
+                    ]
+                };
+            }
+
+            generatePattern(key, chord, measures = 2, melodyPattern) {
+                const analysis = MusicTheory.analyzeMelody(melodyPattern);
+                const pattern = [];
+
+                // Choose base pattern based on melody activity
+                let basePattern = this.selectBasePattern(analysis.rhythmicDensity);
+
+                // Get chord tones for bass line construction
+                const chordTones = MusicTheory.getChordNotes(chord.root, chord.type);
+
+                for (let measure = 0; measure < measures; measure++) {
+                    for (let beat = 0; beat < 16; beat++) {
+                        const globalBeat = measure * 16 + beat;
+                        const melodyNote = melodyPattern[globalBeat];
+
+                        if (basePattern[beat]) {
+                            const bassNote = this.selectBassNote(
+                                beat,
+                                chord,
+                                chordTones,
+                                basePattern[beat]
+                            );
+
+                            // Only add bass note if there isn't too much activity
+                            if (this.shouldPlayBass(melodyNote, analysis, beat)) {
+                                pattern.push({
+                                    note: bassNote.note,
+                                    octave: bassNote.octave,
+                                    duration: this.calculateBassDuration(beat),
+                                    velocity: basePattern[beat]
+                                });
+                            } else {
+                                pattern.push(null);
+                            }
+                        } else {
+                            pattern.push(null);
+                        }
+                    }
+                }
+
+                return pattern;
+            }
+
+            selectBasePattern(melodyDensity) {
+                // Choose simpler patterns when melody is dense
+                if (melodyDensity > 0.7) {
+                    return this.bassPatterns.simple;
+                } else if (melodyDensity > 0.4) {
+                    return this.bassPatterns.rootFifth;
+                } else {
+                    return this.bassPatterns.walking;
+                }
+            }
+
+            selectBassNote(beat, chord, chordTones, strength) {
+                // On strong beats, use root note
+                if (beat % 4 === 0) {
+                    return {
+                        note: chord.root,
+                        octave: 2
+                    };
+                }
+
+                // On other emphasized beats, alternate between root and fifth
+                if (strength > 0.6) {
+                    return {
+                        note: chordTones[beat % 2 === 0 ? 0 : 2], // alternate root and fifth
+                        octave: 2
+                    };
+                }
+
+                // For walking bass moments, use chord tones
+                return {
+                    note: chordTones[beat % chordTones.length],
+                    octave: 2
+                };
+            }
+
+            shouldPlayBass(melodyNote, analysis, beat) {
+                // Always play on main beats
+                if (beat % 4 === 0) return true;
+
+                // Avoid playing when melody is in low register
+                if (melodyNote && melodyNote.octave < 4) return false;
+
+                // Reduce bass activity during dense melody sections
+                if (analysis.rhythmicDensity > 0.7 && beat % 2 !== 0) return false;
+
+                return true;
+            }
+
+            calculateBassDuration(beat) {
+                // Longer notes on main beats
+                if (beat % 4 === 0) {
+                    return 0.5; // half note
+                }
+                // Medium length on secondary beats
+                if (beat % 2 === 0) {
+                    return 0.25; // quarter note
+                }
+                // Shorter notes for walking bass moments
+                return 0.125; // eighth note
+            }
+
+            // Additional method for smoother bass lines
+            createBassTransition(fromNote, toNote) {
+                // If notes are far apart, create a smoother transition
+                const fromPitch = MusicTheory.noteToMidi(fromNote.note, fromNote.octave);
+                const toPitch = MusicTheory.noteToMidi(toNote.note, toNote.octave);
+
+                if (Math.abs(fromPitch - toPitch) > 7) {
+                    // Create a stepping stone note halfway between
+                    const midPitch = Math.floor((fromPitch + toPitch) / 2);
+                    return MusicTheory.midiToNote(midPitch);
+                }
+
+                return toNote;
+            }
+        }
+
+        class MelodyGenerator extends BasePatternGenerator {
+            constructor() {
+                super();
+                this.currentMotif = null;
+                this.rhythmicComplexity = 0.5;
+
+                // Define core melodic patterns
+                this.melodicPatterns = {
+                    ascending: {
+                        intervals: [2, 2, 1, 2], // stepwise up
+                        rhythmPattern: [1, 0, 1, 0, 1, 0, 1, 0],
+                        preferredLength: 4
+                    },
+                    descending: {
+                        intervals: [-2, -2, -1, -2], // stepwise down
+                        rhythmPattern: [1, 0, 1, 0, 1, 0, 1, 0],
+                        preferredLength: 4
+                    },
+                    arpeggiated: {
+                        intervals: [4, 3, 4], // thirds up
+                        rhythmPattern: [1, 0, 0, 1, 0, 0, 1, 0],
+                        preferredLength: 3
+                    },
+                    question: {
+                        intervals: [2, 2, -1], // rising question
+                        rhythmPattern: [1, 0, 1, 0, 1, 0],
+                        preferredLength: 3
+                    },
+                    answer: {
+                        intervals: [-2, -2, -3], // falling answer
+                        rhythmPattern: [1, 0, 1, 0, 1],
+                        preferredLength: 3
+                    }
+                };
+
+                // Different ways to develop motifs
+                this.developments = {
+                    inversion: (intervals) => intervals.map(i => -i),
+                    retrograde: (intervals) => [...intervals].reverse(),
+                    augmentation: (rhythm) => rhythm.map(r => r).flatMap(r => [r, 0]),
+                    diminution: (rhythm) => rhythm.filter((_, i) => i % 2 === 0),
+                    transposition: (intervals, amount) => intervals.map(i => i + amount)
+                };
+            }
+
+            generatePattern(key, chord, measures = 2, previousPattern = null) {
+                if (typeof key !== 'number' || chord === null) {
+                    console.log('Invalid key or chord provided', key, chord);
+                    return [];
+                }
+                const pattern = [];
+                const scaleNotes = MusicTheory.getScaleNotes(key, 'pentatonicMinor');
+
+                // Decide whether to develop previous motif or create new one
+                if (previousPattern && this.currentMotif && Math.random() < 0.7) {
+                    this.developCurrentMotif();
+                } else {
+                    this.createNewMotif(scaleNotes);
+                }
+
+                let currentNote = {
+                    note: scaleNotes[Math.floor(Math.random() * scaleNotes.length)],
+                    octave: 4
+                };
+
+                for (let measure = 0; measure < measures; measure++) {
+                    for (let beat = 0; beat < 16; beat++) {
+                        const shouldPlay = this.shouldPlayNote(beat, measure);
+
+                        if (shouldPlay) {
+                            // Get next note based on current motif
+                            const nextNote = this.getNextMotifNote(currentNote, scaleNotes);
+
+                            pattern.push({
+                                note: nextNote.note,
+                                octave: nextNote.octave,
+                                duration: this.calculateNoteDuration(beat, measure),
+                                velocity: this.calculateVelocity(beat, this.tensionLevel)
+                            });
+
+                            currentNote = nextNote;
+                        } else {
+                            pattern.push(null);
+                        }
+                    }
+                }
+
+                return pattern;
+            }
+
+            createNewMotif(scaleNotes) {
+                // Randomly select a base pattern type
+                const patternTypes = Object.keys(this.melodicPatterns);
+                const selectedType = patternTypes[Math.floor(Math.random() * patternTypes.length)];
+                const basePattern = this.melodicPatterns[selectedType];
+
+                this.currentMotif = {
+                    type: selectedType,
+                    intervals: [...basePattern.intervals],
+                    rhythmPattern: [...basePattern.rhythmPattern],
+                    startingNote: scaleNotes[Math.floor(Math.random() * scaleNotes.length)],
+                    currentPosition: 0
+                };
+            }
+
+            developCurrentMotif() {
+                // Randomly select a development technique
+                const developments = Object.keys(this.developments);
+                const development = developments[Math.floor(Math.random() * developments.length)];
+
+                if (development === 'transposition') {
+                    const amount = Math.floor(Math.random() * 3) + 1;
+                    this.currentMotif.intervals = this.developments.transposition(
+                        this.currentMotif.intervals,
+                        amount
+                    );
+                } else if (development === 'augmentation' || development === 'diminution') {
+                    this.currentMotif.rhythmPattern = this.developments[development](
+                        this.currentMotif.rhythmPattern
+                    );
+                } else {
+                    this.currentMotif.intervals = this.developments[development](
+                        this.currentMotif.intervals
+                    );
+                }
+
+                // Increase tension slightly with each development
+                this.tensionLevel = Math.min(1, this.tensionLevel + 0.1);
+            }
+
+            getNextMotifNote(currentNote, scaleNotes) {
+                const currentIndex = scaleNotes.indexOf(currentNote.note);
+                const interval = this.currentMotif.intervals[this.currentMotif.currentPosition];
+
+                // Calculate new note index
+                let newIndex = currentIndex + interval;
+                let octaveChange = 0;
+
+                // Handle octave changes
+                while (newIndex >= scaleNotes.length) {
+                    newIndex -= scaleNotes.length;
+                    octaveChange++;
+                }
+                while (newIndex < 0) {
+                    newIndex += scaleNotes.length;
+                    octaveChange--;
+                }
+
+                // Update motif position
+                this.currentMotif.currentPosition =
+                    (this.currentMotif.currentPosition + 1) % this.currentMotif.intervals.length;
+
+                return {
+                    note: scaleNotes[newIndex],
+                    octave: currentNote.octave + octaveChange
+                };
+            }
+
+            shouldPlayNote(beat, measure) {
+                // Check against current motif's rhythm pattern
+                const rhythmPosition = beat % this.currentMotif.rhythmPattern.length;
+                const baseProb = this.currentMotif.rhythmPattern[rhythmPosition];
+
+                // Add some randomization based on rhythmic complexity
+                const randomFactor = this.getPseudoRandomValue(beat + measure * 16);
+                return randomFactor < baseProb * this.rhythmicComplexity;
+            }
+
+            calculateNoteDuration(beat, measure) {
+                // Base duration on position in measure and rhythm pattern
+                const baseLength = 0.25; // quarter note
+                const position = beat % 4;
+
+                // Longer notes on strong beats
+                if (position === 0 && Math.random() < 0.3) {
+                    return baseLength * 2;
+                }
+
+                // Shorter notes for more rhythmic passages
+                if (this.rhythmicComplexity > 0.7 && Math.random() < 0.3) {
+                    return baseLength * 0.5;
+                }
+
+                return baseLength;
+            }
+        }
+
+        class HarmonyGenerator extends BasePatternGenerator {
+            constructor() {
+                super();
+                // Define standard octave ranges for different chord voices
+                this.voicingRanges = {
+                    high: { min: 4, max: 5 },    // Higher voices
+                    mid: { min: 3, max: 4 },     // Middle voices
+                    low: { min: 2, max: 3 }      // Lower voices
+                };
+            }
+
+            generatePattern(key, chord, measures = 2, melodyPattern) {
+                const analysis = MusicTheory.analyzeMelody(melodyPattern);
+                const pattern = [];
+
+                // Get base voicing for this chord
+                const baseVoicing = this.getBaseVoicing(chord);
+
+                for (let measure = 0; measure < measures; measure++) {
+                    for (let beat = 0; beat < 16; beat++) {
+                        const globalBeat = measure * 16 + beat;
+                        const melodyNote = melodyPattern[globalBeat];
+
+                        if (melodyNote) {
+                            // Adjust voicing based on melody note
+                            const voicing = this.adjustVoicingForMelody(
+                                baseVoicing,
+                                melodyNote,
+                                chord
+                            );
+
+                            pattern.push({
+                                notes: voicing,
+                                duration: this.calculateHarmonyDuration(beat),
+                                velocity: 0.8
+                            });
+                        } else {
+                            // During melody rests, use base voicing
+                            if (beat % 4 === 0) {
+                                pattern.push({
+                                    notes: baseVoicing,
+                                    duration: 0.25,
+                                    velocity: 0.6
+                                });
+                            } else {
+                                pattern.push(null);
+                            }
+                        }
+                    }
+                }
+
+                return pattern;
+            }
+
+            getBaseVoicing(chord) {
+                const chordNotes = MusicTheory.getChordNotes(chord.root, chord.type);
+                const voicing = [];
+
+                // Add root in bass register
+                voicing.push({
+                    note: chordNotes[0],
+                    octave: this.voicingRanges.low.min
+                });
+
+                // Add third and fifth in middle register
+                voicing.push({
+                    note: chordNotes[1],
+                    octave: this.voicingRanges.mid.min
+                });
+                voicing.push({
+                    note: chordNotes[2],
+                    octave: this.voicingRanges.mid.max
+                });
+
+                return voicing;
+            }
+
+            adjustVoicingForMelody(baseVoicing, melodyNote, chord) {
+                const adjustedVoicing = [...baseVoicing];
+                const melodyPitch = MusicTheory.noteToMidi(melodyNote.note, melodyNote.octave);
+
+                // Adjust voices that are too close to melody
+                adjustedVoicing.forEach((voice, index) => {
+                    const voicePitch = MusicTheory.noteToMidi(voice.note, voice.octave);
+
+                    // If voice is too close to melody (within 3 semitones)
+                    if (Math.abs(melodyPitch - voicePitch) < 3) {
+                        // Move voice down an octave if it's not the bass
+                        if (index > 0) {
+                            voice.octave--;
+                        }
+                    }
+                });
+
+                // Add additional color tones if there's space
+                if (chord.type === 'major7' || chord.type === 'minor7') {
+                    const seventh = MusicTheory.getChordNotes(chord.root, chord.type)[3];
+                    // Add seventh below melody if there's room
+                    if (melodyNote.octave > this.voicingRanges.mid.min) {
+                        adjustedVoicing.push({
+                            note: seventh,
+                            octave: melodyNote.octave - 1
+                        });
+                    }
+                }
+
+                return adjustedVoicing;
+            }
+            calculateHarmonyDuration(beat) {
+                // Longer durations on main beats
+                if (beat % 4 === 0) return 0.5;
+                return 0.25;
+            }
+
+            calculateVoiceSpacing(voicing) {
+                // Check if voices are well-spaced
+                for (let i = 0; i < voicing.length - 1; i++) {
+                    const currentPitch = MusicTheory.noteToMidi(voicing[i].note, voicing[i].octave);
+                    const nextPitch = MusicTheory.noteToMidi(voicing[i + 1].note, voicing[i + 1].octave);
+
+                    // If voices are too far apart or too close
+                    if (Math.abs(nextPitch - currentPitch) > 12 || Math.abs(nextPitch - currentPitch) < 2) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
+        class DrumGenerator extends BasePatternGenerator {
+            constructor() {
+                super();
+                this.rhythmicComplexity = 0.4;
+
+                // Common drum patterns as templates
+                this.kickTemplates = {
+                    simple: [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+                    syncopated: [1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0],
+                    dense: [1, 0, 0.5, 0, 1, 0, 0.5, 0, 1, 0, 0.5, 0, 1, 0, 0.5, 0]
+                };
+
+                this.snareTemplates = {
+                    simple: [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+                    ghost: [0, 0.3, 1, 0.3, 0, 0.3, 1, 0.3, 0, 0.3, 1, 0.3, 0, 0.3, 1, 0.3],
+                    sparse: [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0.7, 0, 0, 0, 1, 0]
+                };
+
+                this.hihatTemplates = {
+                    eighth: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+                    sixteenth: [1, 0.7, 1, 0.7, 1, 0.7, 1, 0.7, 1, 0.7, 1, 0.7, 1, 0.7, 1, 0.7],
+                    offbeat: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+                };
+            }
+
+            generatePattern(measures = 2, melodyPattern) {
+                const analysis = MusicTheory.analyzeMelody(melodyPattern);
+                const pattern = [];
+
+                // Calculate overall characteristics based on melody
+                const density = analysis.rhythmicDensity;
+                const activity = this.calculateRhythmicActivity(melodyPattern);
+                const accentPoints = this.findAccentPoints(melodyPattern);
+
+                // Choose base templates based on melody characteristics
+                let kickBase = density > 0.6 ? this.kickTemplates.dense :
+                              density > 0.3 ? this.kickTemplates.syncopated :
+                              this.kickTemplates.simple;
+
+                let snareBase = activity > 0.6 ? this.snareTemplates.ghost :
+                               activity > 0.3 ? this.snareTemplates.simple :
+                               this.snareTemplates.sparse;
+
+                let hihatBase = density > 0.7 ? this.hihatTemplates.sixteenth :
+                               density > 0.4 ? this.hihatTemplates.eighth :
+                               this.hihatTemplates.offbeat;
+
+                for (let measure = 0; measure < measures; measure++) {
+                    for (let beat = 0; beat < 16; beat++) {
+                        const globalBeat = measure * 16 + beat;
+                        const melodyNote = melodyPattern[globalBeat];
+
+                        // Adjust patterns based on melody
+                        let kick = this.adjustKick(kickBase[beat], melodyNote, beat);
+                        let snare = this.adjustSnare(snareBase[beat], melodyNote, beat);
+                        let hihat = this.adjustHiHat(hihatBase[beat], melodyNote, beat);
+
+                        // Add variation based on accent points
+                        if (accentPoints.includes(globalBeat)) {
+                            kick *= 1.2;  // Emphasize kicks on accent points
+                            snare *= 0.8; // Reduce snare on accent points
+                        }
+
+                        pattern.push({
+                            kick: Math.min(1, kick),
+                            snare: Math.min(1, snare),
+                            hihat: Math.min(1, hihat)
+                        });
+                    }
+                }
+
+                return pattern;
+            }
+
+            adjustKick(baseValue, melodyNote, beat) {
+                // Reduce kick if melody has low note
+                if (melodyNote && melodyNote.octave < 4) {
+                    return baseValue * 0.7;
+                }
+                // Emphasize kicks on main beats
+                if (beat % 4 === 0) {
+                    return baseValue * 1.2;
+                }
+                return baseValue;
+            }
+
+            adjustSnare(baseValue, melodyNote, beat) {
+                // Add ghost notes during melody rests
+                if (!melodyNote && beat % 4 !== 0) {
+                    return baseValue * 0.5;
+                }
+                return baseValue;
+            }
+
+            adjustHiHat(baseValue, melodyNote, beat) {
+                // Vary hi-hat pattern based on melody rhythm
+                if (melodyNote) {
+                    return baseValue * 0.8; // Slightly reduce during melody notes
+                }
+                return baseValue;
+            }
+
+            calculateRhythmicActivity(pattern) {
+                let changes = 0;
+                let lastNote = null;
+                pattern.forEach(note => {
+                    if ((note && !lastNote) || (!note && lastNote)) {
+                        changes++;
+                    }
+                    lastNote = note;
+                });
+                return changes / pattern.length;
+            }
+
+            findAccentPoints(pattern) {
+                const accents = [];
+                pattern.forEach((note, i) => {
+                    if (note) {
+                        // Check for isolated notes
+                        const isIsolated = !pattern[i-1] && !pattern[i+1];
+                        // Check for high notes
+                        const isHigh = note.octave > 4;
+                        // Check for longer duration
+                        const isLong = note.duration > 0.25;
+
+                        if (isIsolated || isHigh || isLong) {
+                            accents.push(i);
+                        }
+                    }
+                });
+                return accents;
+            }
+        }
+
+        class PatternCoordinator {
+            constructor() {
+                this.melodyGenerator = new MelodyGenerator();
+                this.harmonyGenerator = new HarmonyGenerator();
+                this.bassGenerator = new BassGenerator();
+                this.drumGenerator = new DrumGenerator();
+            }
+
+            generateFullPattern(key, chord, measures = 2, previousPatterns = null) {
+                // Generate melody first
+                const melodyPattern = this.melodyGenerator.generatePattern(
+                    key, chord, measures, previousPatterns?.melody
+                );
+
+                // Generate other patterns based on melody
+                return {
+                    melody: melodyPattern,
+                    harmony: this.harmonyGenerator.generatePattern(key, chord, measures, melodyPattern),
+                    bass: this.bassGenerator.generatePattern(key, chord, measures, melodyPattern),
+                    drums: this.drumGenerator.generatePattern(measures, melodyPattern)
+                };
+            }
+        }
+
+        class SectionSynth{
+
+        }
+        class SynthSettings {
+            constructor() {
+                this.waveType = 'triangle';  // 'sine', 'square', 'sawtooth', 'triangle'
+                this.detune = 0;            // cents (-1200 to 1200)
+                this.envelope = {
+                    attack: 0.005,
+                    decay: 0.1,
+                    sustain: 0.3,
+                    release: 0.1
+                };
+                this.filter = {
+                    frequency: 2000,
+                    resonance: 1,
+                    type: 'lowpass'  // 'lowpass', 'highpass', 'bandpass'
+                };
+            }
+
+            // Clone method for creating copies
+            clone() {
+                const settings = new SynthSettings();
+                settings.waveType = this.waveType;
+                settings.detune = this.detune;
+                settings.envelope = {...this.envelope};
+                settings.filter = {...this.filter};
+                return settings;
+            }
+        }
+
+        class BaseSynth {
+            constructor(context, destination) {
+                this.context = context;
+                this.destination = destination;
+                this.volume = this.context.createGain();
+                this.volume.connect(destination);
+                this.activeVoices = new Map();
+                this.cleanupInterval = setInterval(() => this.cleanupVoices(), 1000);
+            }
+
+            setVolume(value) {
+                this.volume.gain.setValueAtTime(value, this.context.currentTime);
+            }
+
+            mute() {
+                this.volume.gain.setValueAtTime(0, this.context.currentTime);
+            }
+
+            unmute() {
+                this.volume.gain.setValueAtTime(1, this.context.currentTime);
+            }
+
+            stopAll() {
+                this.activeVoices.forEach(voice => {
+                    // Stop oscillators if they exist
+                    if (voice.osc1) {
+                        voice.osc1.stop();
+                        voice.osc1.disconnect();
+                    }
+                    if (voice.osc2) {
+                        voice.osc2.stop();
+                        voice.osc2.disconnect();
+                    }
+                    // Set gain to 0 if amp exists
+                    if (voice.amp) {
+                        voice.amp.gain.setValueAtTime(0, this.context.currentTime);
+                        voice.amp.disconnect();
+                    }
+                    // Stop noise buffer if it exists (for drums)
+                    if (voice.noise) {
+                        voice.noise.stop();
+                        voice.noise.disconnect();
+                    }
+                });
+                this.activeVoices.clear();
+            }
+            cleanupVoices() {
+                const currentTime = this.context.currentTime;
+                for (const [note, voice] of this.activeVoices.entries()) {
+                    if (voice.endTime && voice.endTime < currentTime) {
+                        this.activeVoices.delete(note);
+                    }
+                }
+            }
+            dispose() {
+                clearInterval(this.cleanupInterval);
+                this.stopAll();
+                this.volume.disconnect();
+            }
+        }
+
+        class SynthFactory {
+            static createSynth(type, context, destination) {
+                switch(type) {
+                    case SynthTypes.LOFI_PIANO:
+                        return new LofiPianoSynth(context, destination);
+                    case SynthTypes.PAD:
+                        return new PadSynth(context, destination);
+                    case SynthTypes.BASS:
+                        return new BassSynth(context, destination);
+                    case SynthTypes.DRUMS:
+                        return new DrumSynth(context, destination);
+                    default:
+                        throw new Error(`Unknown synth type: ${type}`);
+                }
+            }
+        }
+
+        class LofiPianoSynth extends BaseSynth {
+            constructor(context, destination) {
+                super(context, destination);
+                this.settings = new SynthSettings();
+                this.setupFilter();
+            }
+
+            setupFilter() {
+                this.filter = this.context.createBiquadFilter();
+                this.updateFilterSettings();
+                this.filter.connect(this.volume);
+            }
+
+            updateFilterSettings() {
+                this.filter.type = this.settings.filter.type;
+                this.filter.frequency.value = this.settings.filter.frequency;
+                this.filter.Q.value = this.settings.filter.resonance;
+            }
+
+            updateSettings(settings) {
+                this.settings = settings.clone();
+                this.updateFilterSettings();
+            }
+
+            playNote(note, time, duration) {
+                const osc1 = this.context.createOscillator();
+                const osc2 = this.context.createOscillator();
+                const amp = this.context.createGain();
+
+                // Apply settings
+                osc1.type = this.settings.waveType;
+                osc2.type = this.settings.waveType;
+
+                const frequency = MusicTheory.noteToFrequency(note.note, note.octave);
+                osc1.frequency.setValueAtTime(frequency, time);
+                osc2.frequency.setValueAtTime(frequency * (1 + this.settings.detune/1200), time);
+
+                // Apply ADSR envelope
+                const { attack, decay, sustain, release } = this.settings.envelope;
+                amp.gain.setValueAtTime(0, time);
+                amp.gain.linearRampToValueAtTime(note.velocity || 0.7, time + attack);
+                amp.gain.linearRampToValueAtTime(sustain * (note.velocity || 0.7), time + attack + decay);
+                amp.gain.linearRampToValueAtTime(0.001, time + duration + release);
+
+                osc1.connect(amp);
+                osc2.connect(amp);
+                amp.connect(this.filter);
+
+                osc1.start(time);
+                osc2.start(time);
+                osc1.stop(time + duration + release);
+                osc2.stop(time + duration + release);
+
+                this.activeVoices.set(note, { osc1, osc2, amp });
+            }
+        }
+
+        class PadSynth extends BaseSynth {
+            constructor(context, destination) {
+                super(context, destination);
+                this.filter = context.createBiquadFilter();
+                this.filter.type = 'lowpass';
+                this.filter.frequency.value = 1500;
+                this.filter.connect(this.volume);
+            }
+
+            playNote(chord, time, duration) {
+                chord.notes.forEach(note => {
+                    const osc1 = this.context.createOscillator();
+                    const osc2 = this.context.createOscillator();
+                    const amp = this.context.createGain();
+
+                    osc1.type = 'sine';
+                    osc2.type = 'triangle';
+
+                    const frequency = MusicTheory.noteToFrequency(note.note, note.octave);
+                    osc1.frequency.setValueAtTime(frequency, time);
+                    osc2.frequency.setValueAtTime(frequency * 1.001, time);
+
+                    // Pad-like envelope with slow attack
+                    amp.gain.setValueAtTime(0, time);
+                    amp.gain.linearRampToValueAtTime(chord.velocity || 0.5, time + 0.1);
+                    amp.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+                    osc1.connect(amp);
+                    osc2.connect(amp);
+                    amp.connect(this.filter);
+
+                    osc1.start(time);
+                    osc2.start(time);
+                    osc1.stop(time + duration);
+                    osc2.stop(time + duration);
+
+                    this.activeVoices.set(note, { osc1, osc2, amp });
+                });
+            }
+        }
+
+        class BassSynth extends BaseSynth {
+            constructor(context, destination) {
+                super(context, destination);
+                this.filter = context.createBiquadFilter();
+                this.filter.type = 'lowpass';
+                this.filter.frequency.value = 500;
+                this.filter.connect(this.volume);
+            }
+
+            playNote(note, time, duration) {
+                const osc = this.context.createOscillator();
+                const amp = this.context.createGain();
+
+                osc.type = 'sawtooth';
+                const frequency = MusicTheory.noteToFrequency(note.note, note.octave);
+                osc.frequency.setValueAtTime(frequency, time);
+
+                amp.gain.setValueAtTime(0, time);
+                amp.gain.linearRampToValueAtTime(note.velocity || 0.8, time + 0.02);
+                amp.gain.exponentialRampToValueAtTime(0.001, time + duration);
+
+                osc.connect(amp);
+                amp.connect(this.filter);
+
+                osc.start(time);
+                osc.stop(time + duration);
+
+                this.activeVoices.set(note, { osc, amp });
+            }
+        }
+
+        class DrumSynth extends BaseSynth {
+            constructor(context, destination) {
+                super(context, destination);
+            }
+
+            playNote(drumNote, time, duration) {
+                if (drumNote.kick) this.playKick(time, drumNote.kick);
+                if (drumNote.snare) this.playSnare(time, drumNote.snare);
+                if (drumNote.hihat) this.playHiHat(time, drumNote.hihat);
+            }
+
+            playKick(time, velocity) {
+                const osc = this.context.createOscillator();
+                const amp = this.context.createGain();
+
+                osc.frequency.setValueAtTime(150, time);
+                osc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
+
+                amp.gain.setValueAtTime(velocity, time);
+                amp.gain.exponentialRampToValueAtTime(0.001, time + 0.5);
+
+                osc.connect(amp);
+                amp.connect(this.volume);
+
+                osc.start(time);
+                osc.stop(time + 0.5);
+            }
+
+            playSnare(time, velocity) {
+                // Noise + tone for snare
+                const noise = this.createNoiseBuffer();
+                const noiseGain = this.context.createGain();
+                const filter = this.context.createBiquadFilter();
+
+                filter.type = 'bandpass';
+                filter.frequency.value = 1000;
+
+                noiseGain.gain.setValueAtTime(velocity, time);
+                noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.2);
+
+                noise.connect(filter);
+                filter.connect(noiseGain);
+                noiseGain.connect(this.volume);
+
+                noise.start(time);
+                noise.stop(time + 0.2);
+            }
+
+            playHiHat(time, velocity) {
+                const noise = this.createNoiseBuffer();
+                const noiseGain = this.context.createGain();
+                const filter = this.context.createBiquadFilter();
+
+                filter.type = 'highpass';
+                filter.frequency.value = 7000;
+
+                noiseGain.gain.setValueAtTime(velocity * 0.3, time);
+                noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
+
+                noise.connect(filter);
+                filter.connect(noiseGain);
+                noiseGain.connect(this.volume);
+
+                noise.start(time);
+                noise.stop(time + 0.1);
+            }
+
+            createNoiseBuffer() {
+                const bufferSize = this.context.sampleRate * 2;
+                const buffer = this.context.createBuffer(1, bufferSize, this.context.sampleRate);
+                const output = buffer.getChannelData(0);
+
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1;
+                }
+
+                const noise = this.context.createBufferSource();
+                noise.buffer = buffer;
+                return noise;
+            }
+        }
+
+        const SynthTypes = {
+            LOFI_PIANO: 'lofiPiano',
+            PAD: 'pad',
+            BASS: 'bass',
+            DRUMS: 'drums',
+            // Add more synth types as needed
+        };
+
+        class SectionMain{
+
+        }
+        let audioEngine = null;
+        let songManager = null;
+        let uiController = null;
+
+        // Wait for DOM content to load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Create a startup overlay or button
+            const startupOverlay = document.createElement('div');
+            startupOverlay.className = 'startup-overlay';
+            startupOverlay.innerHTML = `
+                <div class="startup-content">
+                    <h2>Lofi Music Generator</h2>
+                    <button id="startButton" class="btn btn-primary">Click to Start</button>
+                </div>
+            `;
+            document.body.appendChild(startupOverlay);
+
+            // Add styles for the overlay
+            const style = document.createElement('style');
+            style.textContent = `
+                .startup-overlay {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.8);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1000;
+                }
+
+                .startup-content {
+                    text-align: center;
+                    color: white;
+                    padding: 2rem;
+                }
+            `;
+            document.head.appendChild(style);
+
+            // Initialize audio after user interaction
+            document.getElementById('startButton').addEventListener('click', () => {
+                // Initialize audio components
+                audioEngine = new AudioEngine();
+                songManager = new SongManager(audioEngine);
+                uiController = new UIController(songManager, audioEngine);
+                songManager.setUIController(uiController);
+                // Remove the overlay
+                startupOverlay.remove();
+
+                // Show the main content
+                document.querySelector('.container').style.display = 'block';
+            });
+
+            // Initially hide the main content
+            document.querySelector('.container').style.display = 'none';
+        });
+        </script>
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html></div>
